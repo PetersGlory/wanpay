@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from 'react';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -10,13 +13,18 @@ export default function LoginScreen() {
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
 
+  const phoneValid = /^\d{10}$/.test(phone);
+  const pinValid = /^\d{4}$/.test(pin);
+  const canLogin = phoneValid && pinValid;
+
   const handleLogin = () => {
     // Navigate to home screen after login
     router.replace('/(tabs)');
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
+      <StatusBar style="dark" />
       <ScrollView style={tw`flex-1 px-6`}>
         <TouchableOpacity onPress={() => router.back()} style={tw`mt-4 mb-8`}>
           <Ionicons name="arrow-back" size={32} color="#000" />
@@ -25,45 +33,43 @@ export default function LoginScreen() {
         <Text style={tw`text-3xl font-bold mb-2`}>Welcome Back!</Text>
         <Text style={tw`text-gray-600 mb-8`}>Login to continue</Text>
 
-        <Text style={tw`text-sm font-semibold mb-2 text-gray-700`}>Phone Number</Text>
-        <View style={tw`border border-gray-300 rounded-xl px-4 py-3 mb-4 flex-row items-center`}>
-          <Text style={tw`text-gray-600 mr-2`}>+234</Text>
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="8012345678"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-          />
-        </View>
+        <Input
+          label="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          placeholder="8012345678"
+          keyboardType="phone-pad"
+          accessibilityLabel="Phone number"
+          prefix="+234"
+          icon="call-outline"
+          helperText={phone.length === 0 ? "Enter your 10-digit phone number" : phoneValid ? "Looks good" : "Please enter a valid 10-digit number"}
+          errored={phone.length > 0 && !phoneValid}
+          errorText={!phoneValid && phone.length > 0 ? "Invalid phone number" : undefined}
+        />
 
-        <Text style={tw`text-sm font-semibold mb-2 text-gray-700`}>PIN</Text>
-        <View style={tw`border border-gray-300 rounded-xl px-4 py-3 mb-2 flex-row items-center`}>
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Enter 4-digit PIN"
-            secureTextEntry={!showPin}
-            keyboardType="number-pad"
-            maxLength={4}
-            value={pin}
-            onChangeText={setPin}
-          />
-          <TouchableOpacity onPress={() => setShowPin(!showPin)}>
-            <Ionicons
-              name={showPin ? 'eye-outline' : 'eye-off-outline'}
-              size={20}
-              color="#666"
-            />
-          </TouchableOpacity>
-        </View>
+        <Input
+          label="PIN"
+          value={pin}
+          onChangeText={setPin}
+          placeholder="Enter 4-digit PIN"
+          keyboardType="number-pad"
+          maxLength={4}
+          accessibilityLabel="4-digit PIN"
+          icon="key-outline"
+          secure={true}
+          secureShown={showPin}
+          showToggle={true}
+          toggleSecure={() => setShowPin(!showPin)}
+          helperText={pin.length === 0 ? "Use a 4-digit PIN" : pinValid ? "PIN looks good" : "PIN must be exactly 4 digits"}
+          errored={pin.length > 0 && !pinValid}
+          errorText={!pinValid && pin.length > 0 ? "Invalid PIN" : undefined}
+        />
 
         <TouchableOpacity style={tw`mb-6`}>
           <Text style={tw`text-blue-600 text-right`}>Forgot PIN?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={tw`bg-blue-600 py-4 rounded-xl mb-4`} onPress={handleLogin}>
-          <Text style={tw`text-white text-center font-bold text-lg`}>Login</Text>
-        </TouchableOpacity>
+        <Button label="Login" onPress={handleLogin} disabled={!canLogin} />
 
         <View style={tw`flex-row justify-center`}>
           <Text style={tw`text-gray-600`}>Don't have an account? </Text>

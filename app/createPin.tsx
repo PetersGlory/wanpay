@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import { SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
 
@@ -16,7 +16,7 @@ export default function CreatePinScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <View style={tw`flex-1 px-6`}>
         <TouchableOpacity onPress={() => router.back()} style={tw`mt-4 mb-8`}>
           <Ionicons name="arrow-back" size={32} color="#000" />
