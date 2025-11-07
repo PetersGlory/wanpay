@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 
 export default function ProfileScreen() {
@@ -19,7 +19,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
+    <SafeAreaView style={tw`flex-1 bg-white`}>
       <ScrollView style={tw`flex-1 px-6 pt-4`}>
         <Text style={tw`text-2xl font-bold mb-6`}>Profile</Text>
 

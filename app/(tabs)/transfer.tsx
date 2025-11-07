@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 
 export default function TransferScreen() {
@@ -13,10 +13,10 @@ export default function TransferScreen() {
   const [description, setDescription] = useState('');
 
   return (
-    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
+    <SafeAreaView style={tw`flex-1 bg-white`}>
       <View style={tw`px-6 pt-4 flex-1`}>
         <View style={tw`flex-row items-center mb-6`}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/' as never)}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/')}>
             <Ionicons name="arrow-back" size={32} color="#000" />
           </TouchableOpacity>
           <Text style={tw`text-2xl font-bold ml-4`}>Send Money</Text>
