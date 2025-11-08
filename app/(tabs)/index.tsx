@@ -12,6 +12,7 @@ export default function HomeScreen() {
   const quickActions = [
     { id: 'transfer', name: 'Transfer', icon: 'arrow-forward-circle', screen: 'transfer' },
     { id: 'bills', name: 'Bills', icon: 'document-text', screen: 'bills' },
+    { id: 'grants', name: 'Grants', icon: 'trophy', screen: 'grants' },
     { id: 'receive', name: 'Receive', icon: 'arrow-down-circle', screen: 'index' },
     { id: 'qr', name: 'Scan QR', icon: 'qr-code', screen: 'index' },
   ];
@@ -73,19 +74,22 @@ export default function HomeScreen() {
         {/* Quick Actions */}
         <View style={tw`px-6 mt-6`}>
           <Text style={tw`text-lg font-bold mb-4`}>Quick Actions</Text>
-          <View style={tw`flex-row justify-between`}>
-            {quickActions.map((action) => (
-              <TouchableOpacity
-                key={action.id}
-                style={tw`items-center`}
-                onPress={() => router.push(`/(tabs)/${action.screen}` as any)}
-              >
-                <View style={tw`bg-blue-100 w-16 h-16 rounded-2xl items-center justify-center mb-2`}>
-                  <Ionicons name={action.icon as any} size={28} color="#2563eb" />
-                </View>
-                <Text style={tw`text-xs text-gray-700`}>{action.name}</Text>
-              </TouchableOpacity>
-            ))}
+          <View style={tw`flex-row flex-wrap`}>
+            {quickActions.map((action) => {
+              const isGrants = action.id === 'grants';
+              return (
+                <TouchableOpacity
+                  key={action.id}
+                  style={tw`items-center mb-4 w-[20%]`}
+                  onPress={() => router.push(`/(tabs)/${action.screen}` as any)}
+                >
+                  <View style={tw`${isGrants ? 'bg-purple-100' : 'bg-blue-100'} w-16 h-16 rounded-2xl items-center justify-center mb-2`}>
+                    <Ionicons name={action.icon as any} size={28} color={isGrants ? '#7c3aed' : '#2563eb'} />
+                  </View>
+                  <Text style={tw`text-xs text-gray-700 text-center`}>{action.name}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 

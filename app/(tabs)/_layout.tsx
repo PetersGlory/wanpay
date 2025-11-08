@@ -1,9 +1,9 @@
-import React from "react";
 import { Tabs } from 'expo-router';
+import React from "react";
 
 import { HapticTab } from '@/components/haptic-tab';
-import { Ionicons } from '@expo/vector-icons';
 import { PRIMARY_COLOR } from "@/constants/customConstants";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const tintColor = PRIMARY_COLOR;
@@ -53,6 +53,15 @@ export default function TabLayout() {
           title: 'History',
           tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="time" size={size || 24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="grants"
+        options={{
+          title: 'Grants',
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="trophy" size={size || 24} color={color} />
           ),
         }}
       />

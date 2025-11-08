@@ -29,7 +29,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar barStyle="dark-content" />
       <ScrollView
-        style={tw`flex-1 px-6 pt-4`}
+        style={tw`flex-1 px-4 pt-4`}
         contentContainerStyle={tw`pb-24`}
         showsVerticalScrollIndicator={false}
       >

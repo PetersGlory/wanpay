@@ -35,12 +35,12 @@ export default function BillsScreen() {
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
-      <View style={tw`bg-white px-6 py-4 border-b border-gray-100`}>
+      <View style={tw`bg-white px-4 py-4 border-b border-gray-100`}>
         <Text style={tw`text-2xl font-bold text-gray-900`}>Pay Bills</Text>
         <Text style={tw`text-sm text-gray-500 mt-1`}>Quick and easy payments</Text>
       </View>
 
-      <ScrollView style={tw`flex-1 px-6`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
+      <ScrollView style={tw`flex-1 px-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
         {/* Bill Categories */}
         <View style={tw`mt-6`}>
           <Text style={tw`text-base font-bold text-gray-900 mb-4`}>Services</Text>

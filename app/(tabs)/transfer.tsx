@@ -110,7 +110,7 @@ export default function TransferScreen() {
         style={tw`flex-1`}
       >
         <ScrollView
-          style={tw`flex-1 px-6`}
+          style={tw`flex-1 px-4`}
           contentContainerStyle={tw`pb-12`}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
