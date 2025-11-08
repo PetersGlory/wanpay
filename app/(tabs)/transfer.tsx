@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,8 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import tw from 'twrnc';
 
 type TransferErrors = {
@@ -115,7 +115,7 @@ export default function TransferScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={tw`flex-row items-center mb-8`}>
+          <View style={tw`flex-row py-3 items-center mb-8`}>
             <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
               <Ionicons name="arrow-back" size={28} color="#111827" />
             </TouchableOpacity>

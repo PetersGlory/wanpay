@@ -80,6 +80,15 @@ export default function ProfileScreen() {
               key={action.id}
               style={tw`${action.color} w-[31%] rounded-2xl p-4 items-start`}
               activeOpacity={0.8}
+              onPress={() => {
+                if (action.id === 'limits') {
+                  router.push('/profile/increase-limits' as any);
+                } else if (action.id === 'cards') {
+                  router.push('/profile/manage-cards' as any);
+                } else if (action.id === 'support') {
+                  router.push('/profile/help-support' as any);
+                }
+              }}
             >
               <View style={tw`bg-white/70 w-10 h-10 rounded-full items-center justify-center mb-3`}>
                 <Ionicons name={action.icon as any} size={20} color={action.tint} />
@@ -97,6 +106,19 @@ export default function ProfileScreen() {
                 key={item.id}
                 style={tw`flex-row justify-between items-center px-4 py-4 ${index !== menuItems.length - 1 ? 'border-b border-gray-100' : ''}`}
                 activeOpacity={0.75}
+                onPress={() => {
+                  if (item.id === 1) {
+                    router.push('/profile/personal-information' as any);
+                  } else if (item.id === 2) {
+                    router.push('/profile/security-settings' as any);
+                  } else if (item.id === 3) {
+                    router.push('/profile/transaction-limits' as any);
+                  } else if (item.id === 4) {
+                    router.push('/profile/notifications' as any);
+                  } else if (item.id === 5) {
+                    router.push('/profile/help-support' as any);
+                  }
+                }}
               >
                 <View style={tw`flex-row items-center flex-1`}>
                   <View style={tw`bg-blue-50 w-10 h-10 rounded-full items-center justify-center mr-3`}>
@@ -122,6 +144,7 @@ export default function ProfileScreen() {
             <TouchableOpacity
               style={tw`flex-1 bg-white border border-gray-200 rounded-xl py-3 items-center mr-3`}
               activeOpacity={0.75}
+              onPress={() => router.push('/profile/help-support' as any)}
             >
               <Ionicons name="chatbox-ellipses-outline" size={18} color="#2563eb" />
               <Text style={tw`text-blue-600 font-semibold mt-1`}>Live chat</Text>
@@ -129,6 +152,7 @@ export default function ProfileScreen() {
             <TouchableOpacity
               style={tw`flex-1 bg-blue-600 rounded-xl py-3 items-center`}
               activeOpacity={0.85}
+              onPress={() => router.push('/profile/help-support' as any)}
             >
               <Ionicons name="call-outline" size={18} color="#fff" />
               <Text style={tw`text-white font-semibold mt-1`}>Call us</Text>
