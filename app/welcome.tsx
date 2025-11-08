@@ -1,8 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
 
 export default function WelcomeScreen() {
@@ -20,8 +19,13 @@ export default function WelcomeScreen() {
       >
         <View style={tw`flex-1 justify-center items-center px-6`}>
           <View style={tw`mb-6 items-center`}>
-            <View style={tw`bg-white/20 p-6 rounded-full mb-6`}>
-              <Ionicons name="wallet" size={64} color="#fff" />
+            <View style={tw`bg-white/20 p-6 rounded-full mb-6 p-2`}>
+              <Image
+                source={require("../assets/images/wanpay_logo.png")}
+                style={tw`w-40 h-40 rounded-full`}
+                resizeMode="contain"
+                accessibilityLabel="WanPay logo"
+              />
             </View>
             <Text style={tw`text-5xl font-bold text-white mb-3`}>WanPay</Text>
             <Text style={tw`text-white/90 text-center text-base max-w-xs leading-6`}>

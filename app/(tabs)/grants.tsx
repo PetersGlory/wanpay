@@ -1,20 +1,19 @@
+import { DEEP_PURPLE } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+  Modal,
   SafeAreaView,
   ScrollView,
   Text,
-  TouchableOpacity,
-  View,
   TextInput,
-  Modal,
-  FlatList,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import tw from 'twrnc';
-import { DEEP_PURPLE } from '@/constants/customConstants';
 
 // Types
 interface Grant {
@@ -345,13 +344,13 @@ export default function GrantsHubScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-gray-50`}>
+    <SafeAreaView style={tw`w-full h-full bg-gray-50`}>
       <StatusBar style='light' />
 
       {/* Header with Gradient */}
       <LinearGradient
         colors={[DEEP_PURPLE, '#6d28d9']}
-        style={tw`px-4 pt-6 pb-6`}
+        style={tw`px-4 py-6 h-auto`}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
@@ -391,58 +390,73 @@ export default function GrantsHubScreen() {
         </View>
       </LinearGradient>
 
-      {/* Categories */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={tw`px-6 pt-4 pb-2`}
-        contentContainerStyle={tw`gap-3`}
-      >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category.id}
-            style={[
-              tw`px-4 py-3 rounded-full flex-row items-center`,
-              selectedCategory === category.id ? tw`bg-purple-600` : tw`bg-white`,
-              { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 }
-            ]}
-            onPress={() => setSelectedCategory(category.id)}
-            activeOpacity={0.7}
-          >
-            <Ionicons
-              name={category.icon}
-              size={18}
-              color={selectedCategory === category.id ? '#fff' : category.color}
-            />
-            <Text
-              style={[
-                tw`ml-2 font-semibold`,
-                selectedCategory === category.id ? tw`text-white` : tw`text-gray-700`,
-              ]}
-            >
-              {category.name}
-            </Text>
-            <View
-              style={[
-                tw`ml-2 px-2 py-0.5 rounded-full`,
-                selectedCategory === category.id ? tw`bg-white/20` : tw`bg-gray-100`,
-              ]}
-            >
-              <Text
+      {/* Categories Section */}
+      <View style={tw`bg-white py-3 border-b border-gray-100`}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={tw`px-4 gap-2`}
+        >
+          {categories.map((category) => {
+            const isSelected = selectedCategory === category.id;
+            return (
+              <TouchableOpacity
+                key={category.id}
                 style={[
-                  tw`text-xs font-bold`,
-                  selectedCategory === category.id ? tw`text-white` : tw`text-gray-600`,
+                  tw`flex-row items-center px-4 py-2.5 rounded-full`,
+                  isSelected
+                    ? tw`bg-purple-600`
+                    : tw`bg-gray-100`,
+                  {
+                    shadowColor: isSelected ? '#7c3aed' : '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: isSelected ? 0.2 : 0.05,
+                    shadowRadius: 3,
+                    elevation: isSelected ? 3 : 1,
+                  },
                 ]}
+                onPress={() => setSelectedCategory(category.id)}
+                activeOpacity={0.7}
               >
-                {category.count}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                <Ionicons
+                  name={category.icon}
+                  size={18}
+                  color={isSelected ? '#fff' : category.color}
+                  style={tw`mr-2`}
+                />
+                <Text
+                  style={[
+                    tw`font-semibold text-sm`,
+                    isSelected ? tw`text-white` : tw`text-gray-700`,
+                  ]}
+                >
+                  {category.name}
+                </Text>
+                <View
+                  style={[
+                    tw`ml-2 px-2 py-0.5 rounded-full`,
+                    isSelected ? tw`bg-white/30` : tw`bg-gray-200`,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      tw`text-xs font-bold`,
+                      isSelected ? tw`text-white` : tw`text-gray-600`,
+                    ]}
+                  >
+                    {category.count}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      <View style={tw`flex-1`}>
 
       {/* Grants List */}
-      <ScrollView style={tw`flex-1 px-6 pt-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
+      <ScrollView style={tw`flex-1 px-3 pt-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
         {filteredGrants.length > 0 ? (
           filteredGrants.map((grant) => {
             const statusColors = getStatusColor(grant.status);
@@ -512,6 +526,7 @@ export default function GrantsHubScreen() {
           </View>
         )}
       </ScrollView>
+      </View>
 
       {/* Grant Details Modal */}
       <Modal

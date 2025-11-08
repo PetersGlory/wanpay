@@ -14,7 +14,7 @@ export default function HomeScreen() {
     { id: 'bills', name: 'Bills', icon: 'document-text', screen: 'bills' },
     { id: 'grants', name: 'Grants', icon: 'trophy', screen: 'grants' },
     { id: 'receive', name: 'Receive', icon: 'arrow-down-circle', screen: 'index' },
-    { id: 'qr', name: 'Scan QR', icon: 'qr-code', screen: 'index' },
+    // { id: 'qr', name: 'Scan QR', icon: 'qr-code', screen: 'index' },
   ];
 
   const recentTransactions = [
@@ -74,7 +74,7 @@ export default function HomeScreen() {
         {/* Quick Actions */}
         <View style={tw`px-6 mt-6`}>
           <Text style={tw`text-lg font-bold mb-4`}>Quick Actions</Text>
-          <View style={tw`flex-row flex-wrap`}>
+          <View style={tw`flex-row flex-wrap gap-5`}>
             {quickActions.map((action) => {
               const isGrants = action.id === 'grants';
               return (
