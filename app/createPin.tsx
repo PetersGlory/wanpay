@@ -1,3 +1,4 @@
+import { PRIMARY_COLOR } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -80,7 +81,7 @@ export default function CreatePinScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -152,7 +153,7 @@ export default function CreatePinScreen() {
           </View>
 
           <TouchableOpacity
-            style={tw`bg-blue-600 py-4 rounded-xl shadow-lg ${isSubmitting ? 'opacity-60' : ''}`}
+            style={tw`bg-[${PRIMARY_COLOR}] py-4 rounded-xl shadow-lg ${isSubmitting ? 'opacity-60' : ''}`}
             onPress={handleComplete}
             disabled={isSubmitting}
             activeOpacity={0.85}

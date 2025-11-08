@@ -31,7 +31,7 @@ export default function BillsScreen() {
   ];
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-gray-50`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-gray-50`}>
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}

@@ -38,10 +38,10 @@ export default function HistoryScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <View style={tw`px-6 pt-4 flex-1`}>
         <View style={tw`flex-row items-center mb-6`}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/')}>
+          <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={32} color="#000" />
           </TouchableOpacity>
           <Text style={tw`text-2xl font-bold ml-4`}>Transaction History</Text>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Alert, SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { Alert, SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
 
 const quickActions = [
@@ -26,7 +26,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar barStyle="dark-content" />
       <ScrollView
         style={tw`flex-1 px-6 pt-4`}

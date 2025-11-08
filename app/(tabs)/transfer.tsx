@@ -103,7 +103,7 @@ export default function TransferScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -116,7 +116,7 @@ export default function TransferScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={tw`flex-row items-center mb-8`}>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/')} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
               <Ionicons name="arrow-back" size={28} color="#111827" />
             </TouchableOpacity>
             <Text style={tw`text-2xl font-bold ml-4 text-gray-900`}>Send Money</Text>

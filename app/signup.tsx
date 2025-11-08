@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
+import { PRIMARY_COLOR } from '@/constants/customConstants';
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -82,7 +83,7 @@ export default function SignupScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar style="dark" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -166,7 +167,7 @@ export default function SignupScreen() {
           </View>
 
           <TouchableOpacity
-            style={tw`bg-blue-600 py-4 rounded-xl mb-6 shadow-lg ${loading ? 'opacity-70' : ''}`}
+            style={tw`bg-[${PRIMARY_COLOR}] py-4 rounded-xl mb-6 shadow-lg ${loading ? 'opacity-70' : ''}`}
             onPress={handleContinue}
             disabled={loading}
             activeOpacity={0.8}

@@ -1,3 +1,4 @@
+import { PRIMARY_COLOR } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -95,7 +96,7 @@ export default function OTPScreen() {
   const isOtpComplete = otp.every(digit => digit !== '');
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
       <StatusBar style="dark" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -150,7 +151,7 @@ export default function OTPScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={tw`bg-blue-600 py-4 rounded-xl shadow-lg ${loading || !isOtpComplete ? 'opacity-70' : ''}`}
+            style={tw`bg-[${PRIMARY_COLOR}] py-4 rounded-xl shadow-lg ${loading || !isOtpComplete ? 'opacity-70' : ''}`}
             onPress={() => handleVerify()}
             disabled={loading || !isOtpComplete}
             activeOpacity={0.8}

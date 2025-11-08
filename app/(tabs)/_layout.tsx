@@ -1,13 +1,12 @@
+import React from "react";
 import { Tabs } from 'expo-router';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Ionicons } from '@expo/vector-icons';
+import { PRIMARY_COLOR } from "@/constants/customConstants";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const tintColor = Colors[(colorScheme ?? 'light') as keyof typeof Colors].tint;
+  const tintColor = PRIMARY_COLOR;
 
   return (
     <Tabs

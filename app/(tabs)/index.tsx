@@ -1,3 +1,4 @@
+import { PRIMARY_COLOR } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -37,7 +38,7 @@ export default function HomeScreen() {
       <StatusBar barStyle="dark-content" />
       <ScrollView style={tw`flex-1`}>
         {/* Header */}
-        <View style={tw`bg-blue-600 px-6 pt-4 pb-8 rounded-b-3xl`}>
+        <View style={tw`bg-[${PRIMARY_COLOR}] px-6 pt-6 pb-8 rounded-b-3xl`}>
           <View style={tw`flex-row justify-between items-center mb-6`}>
             <View>
               <Text style={tw`text-white text-sm`}>Good Morning</Text>
