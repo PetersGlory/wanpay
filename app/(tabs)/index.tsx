@@ -12,7 +12,7 @@ export default function HomeScreen() {
   const quickActions = [
     { id: 'transfer', name: 'Transfer', icon: 'arrow-forward-circle', screen: 'transfer' },
     { id: 'bills', name: 'Bills', icon: 'document-text', screen: 'bills' },
-    { id: 'grants', name: 'Grants', icon: 'trophy', screen: 'grants' },
+    { id: 'growth', name: 'Growth', icon: 'trending-up', screen: 'grants' },
     { id: 'receive', name: 'Receive', icon: 'arrow-down-circle', screen: 'index' },
     // { id: 'qr', name: 'Scan QR', icon: 'qr-code', screen: 'index' },
   ];
@@ -76,15 +76,15 @@ export default function HomeScreen() {
           <Text style={tw`text-lg font-bold mb-4`}>Quick Actions</Text>
           <View style={tw`flex-row flex-wrap gap-5`}>
             {quickActions.map((action) => {
-              const isGrants = action.id === 'grants';
+              const isGrowth = action.id === 'growth';
               return (
                 <TouchableOpacity
                   key={action.id}
                   style={tw`items-center mb-4 w-[20%]`}
                   onPress={() => router.push(`/(tabs)/${action.screen}` as any)}
                 >
-                  <View style={tw`${isGrants ? 'bg-purple-100' : 'bg-blue-100'} w-16 h-16 rounded-2xl items-center justify-center mb-2`}>
-                    <Ionicons name={action.icon as any} size={28} color={isGrants ? '#7c3aed' : '#2563eb'} />
+                  <View style={tw`${isGrowth ? 'bg-purple-100' : 'bg-blue-100'} w-16 h-16 rounded-2xl items-center justify-center mb-2`}>
+                    <Ionicons name={action.icon as any} size={28} color={isGrowth ? '#7c3aed' : '#2563eb'} />
                   </View>
                   <Text style={tw`text-xs text-gray-700 text-center`}>{action.name}</Text>
                 </TouchableOpacity>
