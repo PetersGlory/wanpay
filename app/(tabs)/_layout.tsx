@@ -3,159 +3,138 @@ import React from "react";
 import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { PRIMARY_COLOR } from "@/constants/customConstants";
+import {
+  PRIMARY_COLOR,
+  ELECTRIC_BLUE,
+  VIBRANT_ORANGE,
+  DEEP_PURPLE,
+  SUCCESS_GREEN,
+  CHARCOAL,
+  WARNING_AMBER,
+} from "@/constants/customConstants";
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+
+type TabConfig = {
+  name: string;
+  title: string;
+  icon: IoniconName;
+  iconOutline: IoniconName;
+  activeColor: string;
+  activeBg: string;
+};
+
+const TABS: TabConfig[] = [
+  {
+    name: 'index',
+    title: 'Home',
+    icon: 'home',
+    iconOutline: 'home-outline',
+    activeColor: PRIMARY_COLOR,
+    activeBg: `${PRIMARY_COLOR}18`,
+  },
+  {
+    name: 'transfer',
+    title: 'Transfer',
+    icon: 'swap-horizontal',
+    iconOutline: 'swap-horizontal-outline',
+    activeColor: SUCCESS_GREEN,
+    activeBg: `${SUCCESS_GREEN}18`,
+  },
+  {
+    name: 'bills',
+    title: 'Bills',
+    icon: 'receipt',
+    iconOutline: 'receipt-outline',
+    activeColor: VIBRANT_ORANGE,
+    activeBg: `${VIBRANT_ORANGE}18`,
+  },
+  {
+    name: 'history',
+    title: 'History',
+    icon: 'time',
+    iconOutline: 'time-outline',
+    activeColor: ELECTRIC_BLUE,
+    activeBg: `${ELECTRIC_BLUE}18`,
+  },
+  {
+    name: 'grants',
+    title: 'Growth',
+    icon: 'trending-up',
+    iconOutline: 'trending-up-outline',
+    activeColor: DEEP_PURPLE,
+    activeBg: `${DEEP_PURPLE}18`,
+  },
+  {
+    name: 'profile',
+    title: 'Profile',
+    icon: 'person-circle',
+    iconOutline: 'person-circle-outline',
+    activeColor: WARNING_AMBER,
+    activeBg: `${WARNING_AMBER}18`,
+  },
+];
 
 export default function TabLayout() {
-  const tintColor = PRIMARY_COLOR;
-
-  // Modern glassmorphic/tab pill/rounded tabs style
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: tintColor,
-        tabBarInactiveTintColor: "#9CA3AF",
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarLabelStyle: {
-          fontSize: 13,
-          fontWeight: '700',
-          letterSpacing: 0.15,
-          marginBottom: 2,
-        },
+        tabBarInactiveTintColor: '#9CA3AF',
         tabBarButton: (props) => <HapticTab {...props} />,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '600',
+          letterSpacing: 0.1,
+          marginBottom: 4,
+        },
         tabBarStyle: {
           position: 'absolute',
-          left: 14,
-          right: 14,
-          // bottom: 25,
-          // elevation: 25,
-          backgroundColor: 'rgba(255,255,255,0.85)',
-          borderRadius: 28,
+          left: 16,
+          right: 16,
+          bottom: 20,
+          backgroundColor: '#FFFFFF',
+          borderRadius: 26,
           borderTopWidth: 0,
-          shadowColor: '#6d28d9',
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.15,
-          shadowRadius: 36,
-          height: 70,
-          paddingBottom: 6,
+          shadowColor: CHARCOAL,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.12,
+          shadowRadius: 24,
+          elevation: 20,
+          height: 68,
+          paddingBottom: 0,
+          paddingTop: 0,
         },
         tabBarItemStyle: {
-          marginVertical: 6,
+          paddingVertical: 6,
           borderRadius: 20,
-        },
-        tabBarIconStyle: {
-          marginBottom: 1,
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "home" : "home-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(109,40,217,0.1)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="transfer"
-        options={{
-          title: 'Transfer',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "arrow-forward-circle" : "arrow-forward-circle-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(16,185,129,0.08)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="bills"
-        options={{
-          title: 'Bills',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "document-text" : "document-text-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(249,115,22,0.09)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "time" : "time-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(55,65,81,0.09)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="grants"
-        options={{
-          title: 'Growth',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "trending-up" : "trending-up-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(67,56,202,0.1)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name={focused ? "person" : "person-outline"}
-              size={20}
-              color={color}
-              style={{
-                backgroundColor: focused ? 'rgba(253,186,116,0.10)' : 'transparent',
-                borderRadius: 12,
-                padding: 2.5,
-              }}
-            />
-          ),
-        }}
-      />
+      {TABS.map(({ name, title, icon, iconOutline, activeColor, activeBg }) => (
+        <Tabs.Screen
+          key={name}
+          name={name}
+          options={{
+            title,
+            tabBarActiveTintColor: activeColor,
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name={focused ? icon : iconOutline}
+                size={22}
+                color={focused ? activeColor : '#9CA3AF'}
+                style={{
+                  backgroundColor: focused ? activeBg : 'transparent',
+                  borderRadius: 10,
+                  padding: 3,
+                  overflow: 'hidden',
+                }}
+              />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
 }

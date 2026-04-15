@@ -1,10 +1,19 @@
-import { PRIMARY_COLOR } from '@/constants/customConstants';
+import { CHARCOAL, ELECTRIC_BLUE, LIGHT_GRAY, PRIMARY_COLOR, SUCCESS_GREEN } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import tw from 'twrnc';
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function OTPScreen() {
   const router = useRouter();
@@ -15,16 +24,12 @@ export default function OTPScreen() {
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   useEffect(() => {
-    // Auto-focus first input on mount
     inputRefs.current[0]?.focus();
   }, []);
 
   useEffect(() => {
-    // Resend timer countdown
     if (resendTimer > 0 && !canResend) {
-      const timer = setTimeout(() => {
-        setResendTimer(resendTimer - 1);
-      }, 1000);
+      const timer = setTimeout(() => setResendTimer((t) => t - 1), 1000);
       return () => clearTimeout(timer);
     } else if (resendTimer === 0) {
       setCanResend(true);
@@ -32,7 +37,6 @@ export default function OTPScreen() {
   }, [resendTimer, canResend]);
 
   const handleOtpChange = (value: string, index: number) => {
-    // Only allow numbers
     const numericValue = value.replace(/[^0-9]/g, '');
     if (numericValue.length > 1) return;
 
@@ -40,23 +44,20 @@ export default function OTPScreen() {
     newOtp[index] = numericValue;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (numericValue && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-verify when all fields are filled
     if (index === 5 && numericValue) {
-      const completeOtp = [...newOtp];
-      completeOtp[index] = numericValue;
-      if (completeOtp.every(digit => digit !== '')) {
-        handleVerify(completeOtp.join(''));
+      const complete = [...newOtp];
+      complete[index] = numericValue;
+      if (complete.every((d) => d !== '')) {
+        handleVerify(complete.join(''));
       }
     }
   };
 
   const handleKeyPress = (e: any, index: number) => {
-    // Handle backspace to go to previous input
     if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -68,15 +69,12 @@ export default function OTPScreen() {
       Alert.alert('Invalid Code', 'Please enter the complete 6-digit code');
       return;
     }
-
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       router.push('/createPin');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Invalid verification code. Please try again.');
-      // Clear OTP on error
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     } finally {
@@ -93,85 +91,157 @@ export default function OTPScreen() {
     Alert.alert('Code Resent', 'A new verification code has been sent to your phone');
   };
 
-  const isOtpComplete = otp.every(digit => digit !== '');
+  const isOtpComplete = otp.every((d) => d !== '');
 
   return (
-    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
       <StatusBar style="dark" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={tw`flex-1`}
+        style={{ flex: 1 }}
       >
-        <View style={tw`flex-1 px-6`}>
+        <View style={{ flex: 1, paddingHorizontal: 24 }}>
+
+          {/* Back button */}
           <TouchableOpacity
             onPress={() => router.back()}
-            style={tw`mt-4 mb-6 w-10`}
+            style={{
+              marginTop: 16,
+              marginBottom: 24,
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: LIGHT_GRAY,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
             activeOpacity={0.7}
           >
-            <Ionicons name="arrow-back" size={28} color="#000" />
+            <Ionicons name="arrow-back" size={20} color={CHARCOAL} />
           </TouchableOpacity>
 
-          <View style={tw`mb-8`}>
-            <Text style={tw`text-3xl font-bold mb-2 text-gray-900`}>Verify Phone</Text>
-            <Text style={tw`text-gray-600 text-base leading-6`}>
-              Enter the 6-digit code sent to{'\n'}
-              <Text style={tw`font-semibold text-gray-900`}>+234 801 234 5678</Text>
-            </Text>
-          </View>
-
-          <View style={tw`flex-row justify-between mb-8`}>
-            {otp.map((digit, idx) => (
-              <TextInput
-                key={idx}
-                ref={(ref) => {
-                  inputRefs.current[idx] = ref;
+          {/* Header */}
+          <View style={{ marginBottom: 32 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+              <View
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 14,
+                  backgroundColor: `${PRIMARY_COLOR}15`,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-                style={tw`border-2 ${
-                  digit ? 'border-blue-600 bg-blue-50' : 'border-gray-300 bg-gray-50'
-                } w-14 h-16 rounded-xl text-center text-2xl font-bold text-gray-900`}
-                keyboardType="number-pad"
-                maxLength={1}
-                value={digit}
-                onChangeText={(val) => handleOtpChange(val, idx)}
-                onKeyPress={(e) => handleKeyPress(e, idx)}
-                selectTextOnFocus
-              />
-            ))}
+              >
+                <Ionicons name="chatbubble-ellipses" size={22} color={PRIMARY_COLOR} />
+              </View>
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontWeight: '700',
+                  color: CHARCOAL,
+                  letterSpacing: -0.5,
+                }}
+              >
+                Verify Phone
+              </Text>
+            </View>
+            <Text style={{ fontSize: 14, color: '#6B7280', lineHeight: 22 }}>
+              Enter the 6-digit code sent to{'\n'}
+              <Text style={{ fontWeight: '700', color: CHARCOAL }}>+234 801 234 5678</Text>
+            </Text>
           </View>
 
-          <TouchableOpacity
-            style={tw`mb-8 ${canResend ? '' : 'opacity-50'}`}
-            onPress={handleResend}
-            disabled={!canResend}
-            activeOpacity={0.7}
-          >
-            <Text style={tw`text-blue-600 text-center font-medium`}>
-              {canResend ? 'Resend Code' : `Resend Code in ${resendTimer}s`}
-            </Text>
-          </TouchableOpacity>
+          {/* OTP Inputs */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+            {otp.map((digit, idx) => {
+              const isFilled = digit !== '';
+              const isActive = !isFilled && otp.slice(0, idx).every((d) => d !== '');
+              return (
+                <TextInput
+                  key={idx}
+                  ref={(ref) => { inputRefs.current[idx] = ref; }}
+                  style={{
+                    width: 48,
+                    height: 56,
+                    borderRadius: 14,
+                    borderWidth: isFilled ? 2 : 1.5,
+                    borderColor: isFilled ? PRIMARY_COLOR : isActive ? ELECTRIC_BLUE : '#D1D5DB',
+                    backgroundColor: isFilled ? `${PRIMARY_COLOR}10` : LIGHT_GRAY,
+                    textAlign: 'center',
+                    fontSize: 22,
+                    fontWeight: '700',
+                    color: CHARCOAL,
+                  }}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  value={digit}
+                  onChangeText={(val) => handleOtpChange(val, idx)}
+                  onKeyPress={(e) => handleKeyPress(e, idx)}
+                  selectTextOnFocus
+                />
+              );
+            })}
+          </View>
 
+          {/* Helper text */}
+          <Text style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 28, paddingLeft: 2 }}>
+            Check your SMS inbox — the code expires in 10 minutes.
+          </Text>
+
+          {/* Resend */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
+            <Text style={{ fontSize: 14, color: '#6B7280' }}>Didn't receive it? </Text>
+            <TouchableOpacity onPress={handleResend} disabled={!canResend} activeOpacity={0.7}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '700',
+                  color: canResend ? PRIMARY_COLOR : '#9CA3AF',
+                }}
+              >
+                {canResend ? 'Resend Code' : `Resend in ${resendTimer}s`}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* CTA */}
           <TouchableOpacity
-            style={tw`bg-[${PRIMARY_COLOR}] py-4 rounded-xl shadow-lg ${loading || !isOtpComplete ? 'opacity-70' : ''}`}
+            style={{
+              backgroundColor: isOtpComplete && !loading ? PRIMARY_COLOR : `${PRIMARY_COLOR}60`,
+              paddingVertical: 16,
+              borderRadius: 16,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: PRIMARY_COLOR,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: isOtpComplete ? 0.25 : 0,
+              shadowRadius: 12,
+              elevation: isOtpComplete ? 4 : 0,
+            }}
             onPress={() => handleVerify()}
             disabled={loading || !isOtpComplete}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={tw`text-white text-center font-bold text-lg`}>Verify</Text>
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16, letterSpacing: 0.2 }}>
+                Verify
+              </Text>
             )}
           </TouchableOpacity>
 
-          <View style={tw`mt-6 flex-row justify-center items-center`}>
-            <Ionicons name="lock-closed-outline" size={16} color="#6b7280" />
-            <Text style={tw`text-gray-500 text-sm ml-2`}>
+          {/* Trust line */}
+          <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <Ionicons name="shield-checkmark" size={14} color={SUCCESS_GREEN} />
+            <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
               We'll never share your code with anyone
             </Text>
           </View>
+
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
