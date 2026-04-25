@@ -1,28 +1,15 @@
-import React, { useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { DARK_BG } from '@/constants/customConstants';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Modal,
+  Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View,
+} from 'react-native';
 import tw from 'twrnc';
 
-interface DiscoProvider {
-  id: string;
-  name: string;
-  shortName: string;
-}
+interface DiscoProvider { id: string; name: string; shortName: string; }
 
 export default function ElectricityScreen() {
   const router = useRouter();
@@ -37,12 +24,12 @@ export default function ElectricityScreen() {
   const [errors, setErrors] = useState({ disco: '', meter: '', amount: '' });
 
   const discoProviders: DiscoProvider[] = [
-    { id: 'ekedc', name: 'Eko Electricity Distribution Company', shortName: 'EKEDC' },
-    { id: 'ikedc', name: 'Ikeja Electric', shortName: 'IKEDC' },
-    { id: 'aedc', name: 'Abuja Electricity Distribution Company', shortName: 'AEDC' },
-    { id: 'phed', name: 'Port Harcourt Electricity Distribution', shortName: 'PHED' },
-    { id: 'ibedc', name: 'Ibadan Electricity Distribution Company', shortName: 'IBEDC' },
-    { id: 'kedco', name: 'Kano Electricity Distribution Company', shortName: 'KEDCO' },
+    { id: 'ekedc', name: 'Eko Electricity Distribution Company',    shortName: 'EKEDC' },
+    { id: 'ikedc', name: 'Ikeja Electric',                         shortName: 'IKEDC' },
+    { id: 'aedc',  name: 'Abuja Electricity Distribution Company', shortName: 'AEDC'  },
+    { id: 'phed',  name: 'Port Harcourt Electricity Distribution', shortName: 'PHED'  },
+    { id: 'ibedc', name: 'Ibadan Electricity Distribution Company',shortName: 'IBEDC' },
+    { id: 'kedco', name: 'Kano Electricity Distribution Company',  shortName: 'KEDCO' },
   ];
 
   const quickAmounts = [1000, 2000, 5000, 10000, 20000];
@@ -52,7 +39,7 @@ export default function ElectricityScreen() {
     if (numeric.length <= 20) {
       setMeterNumber(numeric);
       setCustomerName('');
-      if (errors.meter) setErrors((prev) => ({ ...prev, meter: '' }));
+      if (errors.meter) setErrors(p => ({ ...p, meter: '' }));
     }
   };
 
@@ -60,270 +47,210 @@ export default function ElectricityScreen() {
     if (meterNumber.length >= 11 && selectedDisco) {
       setIsValidating(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setCustomerName('John Doe');
-      } catch (error) {
-        Alert.alert('Error', 'Invalid meter number. Please check and try again.');
-      } finally {
-        setIsValidating(false);
-      }
+      } catch { Alert.alert('Error', 'Invalid meter number. Please check and try again.'); }
+      finally { setIsValidating(false); }
     }
   };
 
   const handleAmountChange = (text: string) => {
     const numeric = text.replace(/[^0-9]/g, '');
     setAmount(numeric);
-    if (errors.amount) setErrors((prev) => ({ ...prev, amount: '' }));
+    if (errors.amount) setErrors(p => ({ ...p, amount: '' }));
   };
 
   const validateForm = () => {
     const newErrors = { disco: '', meter: '', amount: '' };
     let isValid = true;
-
-    if (!selectedDisco) {
-      newErrors.disco = 'Please select a disco';
-      isValid = false;
-    }
-
-    if (meterNumber.length < 11) {
-      newErrors.meter = 'Meter number must be at least 11 digits';
-      isValid = false;
-    }
-
-    const numericAmount = parseFloat(amount);
-    if (!numericAmount || numericAmount <= 0) {
-      newErrors.amount = 'Enter a valid amount';
-      isValid = false;
-    }
-
+    if (!selectedDisco) { newErrors.disco = 'Please select a disco'; isValid = false; }
+    if (meterNumber.length < 11) { newErrors.meter = 'Meter number must be at least 11 digits'; isValid = false; }
+    if (!parseFloat(amount) || parseFloat(amount) <= 0) { newErrors.amount = 'Enter a valid amount'; isValid = false; }
     setErrors(newErrors);
     return isValid;
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       Alert.alert('Success', `₦${amount} electricity token will be sent to your phone`, [
         { text: 'Done', onPress: () => router.back() },
       ]);
-    } catch (error) {
-      Alert.alert('Error', 'Unable to process request. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    } catch { Alert.alert('Error', 'Unable to process request. Please try again.'); }
+    finally { setIsSubmitting(false); }
   };
 
+  const isDisabled = isSubmitting || !selectedDisco || meterNumber.length < 11 || !amount;
+
   return (
-    <SafeAreaView style={tw`flex-1 py-4 bg-white`}>
-      <StatusBar barStyle="dark-content" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={tw`flex-1`}
-      >
+    <SafeAreaView style={[tw`flex-1 py-5`, { backgroundColor: DARK_BG }]}>
+      <StatusBar style="light" />
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1`}>
+
         {/* Header */}
-        <View style={tw`px-6 py-4 border-b border-gray-100 bg-white`}>
+        <View style={tw`px-5 pt-4 pb-5 border-b border-white/7`}>
           <View style={tw`flex-row items-center`}>
-            <TouchableOpacity onPress={() => router.back()} style={tw`mr-4`} activeOpacity={0.7}>
-              <Ionicons name="arrow-back" size={24} color="#111827" />
+            <TouchableOpacity onPress={() => router.back()} style={tw`w-[38px] h-[38px] rounded-xl bg-white/7 items-center justify-center mr-4`} activeOpacity={0.7}>
+              <Ionicons name="arrow-back" size={20} color="rgba(255,255,255,0.75)" />
             </TouchableOpacity>
             <View>
-              <Text style={tw`text-xl font-bold text-gray-900`}>Electricity Bill</Text>
-              <Text style={tw`text-xs text-gray-500`}>Pay your electricity bills</Text>
+              <Text style={tw`text-white text-[20px] font-bold tracking-tight`}>Electricity bill</Text>
+              <Text style={tw`text-white/35 text-[12px] mt-0.5`}>Pay your electricity bills</Text>
             </View>
           </View>
         </View>
 
-        <ScrollView style={tw`flex-1 px-6 pt-6`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
-          {/* Select Disco */}
-          <View style={tw`mb-6`}>
-            <Text style={tw`text-sm font-semibold text-gray-700 mb-3`}>Select Disco</Text>
+        <ScrollView style={tw`flex-1 px-5 pt-6`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10`}>
+
+          {/* Disco picker */}
+          <View style={tw`mb-5`}>
+            <Text style={tw`text-white/55 text-[12px] font-semibold tracking-wide mb-2`}>Select disco</Text>
             <TouchableOpacity
-              style={tw`border ${errors.disco ? 'border-red-500' : 'border-gray-300'} rounded-xl px-4 py-4 flex-row justify-between items-center bg-gray-50`}
+              style={tw`bg-white/5 border ${errors.disco ? 'border-red-500/70' : 'border-white/10'} rounded-2xl px-4 h-[56px] flex-row justify-between items-center`}
               onPress={() => setShowDiscos(true)}
-              activeOpacity={0.7}
+              activeOpacity={0.75}
             >
               {selectedDisco ? (
                 <View>
-                  <Text style={tw`font-semibold text-gray-900`}>{selectedDisco.shortName}</Text>
-                  <Text style={tw`text-xs text-gray-500`}>{selectedDisco.name}</Text>
+                  <Text style={tw`text-white text-[14px] font-semibold`}>{selectedDisco.shortName}</Text>
+                  <Text style={tw`text-white/35 text-[11px]`}>{selectedDisco.name}</Text>
                 </View>
               ) : (
-                <Text style={tw`text-gray-400`}>Choose your electricity provider</Text>
+                <Text style={tw`text-white/25 text-[14px]`}>Choose your electricity provider</Text>
               )}
-              <Ionicons name="chevron-down" size={24} color="#9ca3af" />
+              <Ionicons name="chevron-down" size={18} color="rgba(255,255,255,0.3)" />
             </TouchableOpacity>
-            {errors.disco ? <Text style={tw`text-red-500 text-xs mt-1 ml-1`}>{errors.disco}</Text> : null}
-
-            {/* Disco Modal */}
-            <Modal visible={showDiscos} animationType="slide" transparent>
-              <View style={tw`flex-1 justify-end bg-black/50`}>
-                <View style={tw`bg-white rounded-t-3xl pt-6 pb-8 max-h-[70%]`}>
-                  <View style={tw`px-6 pb-4 border-b border-gray-100`}>
-                    <View style={tw`flex-row justify-between items-center`}>
-                      <Text style={tw`text-xl font-bold text-gray-900`}>Select Disco</Text>
-                      <TouchableOpacity onPress={() => setShowDiscos(false)} activeOpacity={0.7}>
-                        <Ionicons name="close" size={28} color="#111827" />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                  <FlatList
-                    data={discoProviders}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={tw`px-6 py-4 border-b border-gray-100`}
-                        onPress={() => {
-                          setSelectedDisco(item);
-                          setShowDiscos(false);
-                          if (errors.disco) setErrors((prev) => ({ ...prev, disco: '' }));
-                        }}
-                        activeOpacity={0.7}
-                      >
-                        <Text style={tw`font-bold text-gray-900`}>{item.shortName}</Text>
-                        <Text style={tw`text-sm text-gray-500 mt-1`}>{item.name}</Text>
-                      </TouchableOpacity>
-                    )}
-                  />
-                </View>
-              </View>
-            </Modal>
+            {errors.disco ? <Text style={tw`text-red-400 text-[11px] mt-1.5 ml-1`}>{errors.disco}</Text> : null}
           </View>
 
-          {/* Meter Type */}
-          <View style={tw`mb-6`}>
-            <Text style={tw`text-sm font-semibold text-gray-700 mb-3`}>Meter Type</Text>
-            <View style={tw`flex-row gap-3`}>
-              <TouchableOpacity
-                style={[
-                  tw`flex-1 py-3 rounded-xl border-2`,
-                  meterType === 'prepaid'
-                    ? tw`bg-orange-50 border-orange-600`
-                    : tw`bg-gray-50 border-gray-200`,
-                ]}
-                onPress={() => setMeterType('prepaid')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    tw`text-center font-semibold`,
-                    meterType === 'prepaid' ? tw`text-orange-600` : tw`text-gray-600`,
-                  ]}
+          {/* Meter type toggle */}
+          <View style={tw`mb-5`}>
+            <Text style={tw`text-white/55 text-[12px] font-semibold tracking-wide mb-2`}>Meter type</Text>
+            <View style={tw`flex-row gap-2`}>
+              {(['prepaid', 'postpaid'] as const).map(type => (
+                <TouchableOpacity
+                  key={type}
+                  style={tw`flex-1 h-[46px] rounded-2xl border items-center justify-center ${meterType === type ? 'bg-amber-500/15 border-amber-500/40' : 'bg-white/4 border-white/10'}`}
+                  onPress={() => setMeterType(type)}
+                  activeOpacity={0.75}
                 >
-                  Prepaid
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  tw`flex-1 py-3 rounded-xl border-2`,
-                  meterType === 'postpaid'
-                    ? tw`bg-orange-50 border-orange-600`
-                    : tw`bg-gray-50 border-gray-200`,
-                ]}
-                onPress={() => setMeterType('postpaid')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    tw`text-center font-semibold`,
-                    meterType === 'postpaid' ? tw`text-orange-600` : tw`text-gray-600`,
-                  ]}
-                >
-                  Postpaid
-                </Text>
-              </TouchableOpacity>
+                  <Text style={tw`text-[13px] font-semibold capitalize ${meterType === type ? 'text-amber-400' : 'text-white/40'}`}>
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
-          {/* Meter Number */}
+          {/* Meter number */}
           <View style={tw`mb-2`}>
-            <Text style={tw`text-sm font-semibold text-gray-700 mb-3`}>Meter Number</Text>
-            <View
-              style={tw`border ${errors.meter ? 'border-red-500' : 'border-gray-300'} rounded-xl px-4 py-3 flex-row items-center bg-gray-50`}
-            >
+            <Text style={tw`text-white/55 text-[12px] font-semibold tracking-wide mb-2`}>Meter number</Text>
+            <View style={tw`bg-white/5 border ${errors.meter ? 'border-red-500/70' : 'border-white/10'} rounded-2xl px-4 h-[52px] flex-row items-center`}>
               <TextInput
-                style={tw`flex-1 text-base text-gray-900`}
+                style={tw`flex-1 text-[14px] text-white`}
                 placeholder="Enter meter number"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="rgba(255,255,255,0.2)"
                 keyboardType="number-pad"
                 value={meterNumber}
                 onChangeText={handleMeterChange}
                 onBlur={handleValidateMeter}
                 maxLength={20}
               />
-              {isValidating && <ActivityIndicator size="small" color="#f59e0b" />}
+              {isValidating && <ActivityIndicator size="small" color="#fbbf24" />}
             </View>
-            {errors.meter ? <Text style={tw`text-red-500 text-xs mt-1 ml-1`}>{errors.meter}</Text> : null}
+            {errors.meter ? <Text style={tw`text-red-400 text-[11px] mt-1.5 ml-1`}>{errors.meter}</Text> : null}
           </View>
-          {customerName && (
-            <View style={tw`bg-green-50 border border-green-200 p-3 rounded-xl mb-6 flex-row items-center`}>
-              <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-              <Text style={tw`text-green-700 font-semibold ml-2`}>{customerName}</Text>
+
+          {customerName ? (
+            <View style={tw`bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-2xl mb-5 flex-row items-center gap-2`}>
+              <Ionicons name="checkmark-circle" size={17} color="#10b981" />
+              <Text style={tw`text-emerald-400 font-semibold text-[13px]`}>{customerName}</Text>
             </View>
-          )}
-          {!customerName && <View style={tw`mb-6`} />}
+          ) : <View style={tw`mb-5`} />}
 
           {/* Amount */}
           <View style={tw`mb-4`}>
-            <Text style={tw`text-sm font-semibold text-gray-700 mb-3`}>Amount</Text>
-            <View
-              style={tw`border ${errors.amount ? 'border-red-500' : 'border-gray-300'} rounded-xl px-4 py-3 flex-row items-center bg-gray-50`}
-            >
-              <Text style={tw`text-xl text-gray-700 mr-2`}>₦</Text>
+            <Text style={tw`text-white/55 text-[12px] font-semibold tracking-wide mb-2`}>Amount</Text>
+            <View style={tw`bg-white/5 border ${errors.amount ? 'border-red-500/70' : 'border-white/10'} rounded-2xl px-4 h-[60px] flex-row items-center`}>
+              <Text style={tw`text-white/40 text-[20px] mr-2`}>₦</Text>
               <TextInput
-                style={tw`flex-1 text-xl font-bold text-gray-900`}
+                style={tw`flex-1 text-[24px] font-bold text-white`}
                 placeholder="0"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="rgba(255,255,255,0.15)"
                 keyboardType="decimal-pad"
                 value={amount}
                 onChangeText={handleAmountChange}
               />
             </View>
-            {errors.amount ? <Text style={tw`text-red-500 text-xs mt-1 ml-1`}>{errors.amount}</Text> : null}
+            {errors.amount ? <Text style={tw`text-red-400 text-[11px] mt-1.5 ml-1`}>{errors.amount}</Text> : null}
           </View>
 
-          {/* Quick Amounts */}
+          {/* Quick amounts */}
           <View style={tw`flex-row flex-wrap gap-2 mb-6`}>
-            {quickAmounts.map((amt) => (
+            {quickAmounts.map(amt => (
               <TouchableOpacity
                 key={amt}
-                style={tw`bg-orange-50 border border-orange-100 px-4 py-2 rounded-full`}
-                onPress={() => {
-                  setAmount(amt.toString());
-                  if (errors.amount) setErrors((prev) => ({ ...prev, amount: '' }));
-                }}
+                style={tw`bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full`}
+                onPress={() => { setAmount(amt.toString()); if (errors.amount) setErrors(p => ({ ...p, amount: '' })); }}
                 activeOpacity={0.7}
               >
-                <Text style={tw`text-orange-600 font-semibold`}>₦{amt.toLocaleString()}</Text>
+                <Text style={tw`text-amber-400 text-[13px] font-semibold`}>₦{amt.toLocaleString()}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Info Box */}
-          <View style={tw`bg-orange-50 border border-orange-100 p-4 rounded-xl mb-6 flex-row`}>
-            <Ionicons name="information-circle" size={20} color="#f59e0b" style={tw`mr-2`} />
-            <Text style={tw`text-xs text-gray-700 flex-1`}>
-              Your token will be sent via SMS and shown on the next screen
+          {/* Info notice */}
+          <View style={tw`bg-amber-500/10 border border-amber-500/15 rounded-2xl p-4 mb-7 flex-row items-center gap-3`}>
+            <View style={tw`w-9 h-9 rounded-xl bg-amber-500/20 items-center justify-center flex-shrink-0`}>
+              <Ionicons name="flash-outline" size={17} color="#fbbf24" />
+            </View>
+            <Text style={tw`text-amber-400/70 text-[12px] leading-5 flex-1`}>
+              Your token will be sent via SMS and shown on the next screen.
             </Text>
           </View>
 
+          {/* CTA */}
           <TouchableOpacity
-            style={tw`bg-blue-600 py-4 rounded-xl mb-6 shadow-lg ${isSubmitting || !selectedDisco || meterNumber.length < 11 || !amount ? 'opacity-60' : ''}`}
-            disabled={isSubmitting || !selectedDisco || meterNumber.length < 11 || !amount}
+            style={tw`bg-blue-500 h-[52px] rounded-2xl items-center justify-center ${isDisabled ? 'opacity-50' : ''}`}
+            disabled={isDisabled}
             onPress={handleSubmit}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={tw`text-white text-center font-bold text-lg`}>Continue</Text>
-            )}
+            {isSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={tw`text-white font-semibold text-[15px] tracking-tight`}>Continue</Text>}
           </TouchableOpacity>
+
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Disco modal */}
+      <Modal visible={showDiscos} animationType="slide" transparent>
+        <View style={tw`flex-1 justify-end bg-black/60`}>
+          <View style={[tw`rounded-t-3xl pt-6 pb-10 max-h-[70%]`, { backgroundColor: '#0f0f1e' }]}>
+            <View style={tw`px-5 pb-4 border-b border-white/7 flex-row justify-between items-center`}>
+              <Text style={tw`text-white text-[17px] font-bold tracking-tight`}>Select disco</Text>
+              <TouchableOpacity onPress={() => setShowDiscos(false)} style={tw`w-[34px] h-[34px] rounded-xl bg-white/7 items-center justify-center`} activeOpacity={0.7}>
+                <Ionicons name="close" size={18} color="rgba(255,255,255,0.7)" />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={discoProviders}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={tw`px-5 py-4 border-b border-white/7`}
+                  onPress={() => { setSelectedDisco(item); setShowDiscos(false); if (errors.disco) setErrors(p => ({ ...p, disco: '' })); }}
+                  activeOpacity={0.75}
+                >
+                  <Text style={tw`text-white font-bold text-[14px]`}>{item.shortName}</Text>
+                  <Text style={tw`text-white/35 text-[12px] mt-0.5`}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
-

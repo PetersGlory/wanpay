@@ -1,6 +1,6 @@
-import { DEEP_PURPLE } from '@/constants/customConstants';
+import { DARK_BG } from '@/constants/customConstants';
+import { useGrantsData } from '@/hooks/use-grants';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useMemo, useState } from 'react';
@@ -11,12 +11,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import tw from 'twrnc';
 
-// Types
-interface Grant {
+export interface Grant {
   id: string;
   title: string;
   organization: string;
@@ -30,7 +29,7 @@ interface Grant {
   applicationLink?: string;
 }
 
-interface GrantCategory {
+export interface GrantCategory {
   id: string;
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
@@ -39,121 +38,46 @@ interface GrantCategory {
 }
 
 const GROWTH_SECTIONS = [
-  {
-    id: 'grants',
-    label: 'Grants',
-    description: 'Browse verified local and international grant opportunities.',
-  },
-  {
-    id: 'business-aids',
-    label: 'Business Aids',
-    description: 'Explore government programmes and private funds tailored to Nigerian MSMEs.',
-  },
-  {
-    id: 'training-support',
-    label: 'Training & Support',
-    description: 'Find accelerators, mentorship, and growth services for your team.',
-  },
+  { id: 'grants',           label: 'Grants',           description: 'Browse verified local and international grant opportunities.' },
+  { id: 'business-aids',   label: 'Business Aids',     description: 'Explore government programmes and private funds for Nigerian MSMEs.' },
+  { id: 'training-support', label: 'Training & Support', description: 'Find accelerators, mentorship, and growth services for your team.' },
 ] as const;
 
-type GrowthSection = typeof GROWTH_SECTIONS[number];
-type GrowthSectionId = GrowthSection['id'];
+type GrowthSectionId = typeof GROWTH_SECTIONS[number]['id'];
 
-interface GrowthResourceItem {
-  title: string;
-  description?: string;
-  bullets?: string[];
-}
-
-interface GrowthResourceSection {
-  id: string;
-  title: string;
-  summary?: string;
-  items: GrowthResourceItem[];
-}
+interface GrowthResourceItem { title: string; description?: string; bullets?: string[]; }
+interface GrowthResourceSection { id: string; title: string; summary?: string; items: GrowthResourceItem[]; }
 
 const BUSINESS_AIDS_RESOURCES: GrowthResourceSection[] = [
   {
-    id: 'federal-state',
-    title: 'Federal and State Government Grants',
+    id: 'federal-state', title: 'Federal & State Government Grants',
     items: [
-      {
-        title: 'Lagos State Employment Trust Fund (LSETF)',
-        description:
-          'Offers up to ₦5,000,000 for Lagos-based businesses focused on job creation. Open year-round with rolling assessments.',
-      },
-      {
-        title: 'Federal Government Youth Investment Fund (YIF)',
-        description:
-          'Provides up to ₦3,000,000 for youth (ages 18–35) with viable business ideas. Applications are ongoing nationwide.',
-      },
-      {
-        title: 'Digital and Creative Enterprises (iDiCE) Program',
-        description:
-          'Promotes investment in technology and creative startups in partnership with the Bank of Industry and global development partners.',
-      },
-      {
-        title: 'Skill-Up Artisans Program',
-        description:
-          'Supports artisans and SMEs with hands-on training, certification, and access to specialised equipment.',
-      },
+      { title: 'Lagos State Employment Trust Fund (LSETF)', description: 'Up to ₦5,000,000 for Lagos-based businesses focused on job creation. Open year-round with rolling assessments.' },
+      { title: 'Federal Government Youth Investment Fund (YIF)', description: 'Up to ₦3,000,000 for youth (ages 18–35) with viable business ideas. Applications are ongoing nationwide.' },
+      { title: 'Digital and Creative Enterprises (iDiCE) Program', description: 'Promotes investment in technology and creative startups in partnership with the Bank of Industry.' },
+      { title: 'Skill-Up Artisans Program', description: 'Supports artisans and SMEs with hands-on training, certification, and access to specialised equipment.' },
     ],
   },
   {
-    id: 'private-international',
-    title: 'Private and International Grants',
+    id: 'private-international', title: 'Private & International Grants',
     items: [
-      {
-        title: 'Tony Elumelu Foundation Entrepreneurship Programme',
-        description:
-          'Offers $5,000 in seed funding, mentorship, and business training for African entrepreneurs. Applications open annually via TEFConnect.',
-      },
-      {
-        title: "Africa's Young Entrepreneur Empowerment Nigeria (AYEEN)",
-        description:
-          'Awards grants ranging from hundreds of thousands to millions of naira to innovative entrepreneurs across Nigeria.',
-      },
-      {
-        title: 'GroFin Fund',
-        description:
-          'Provides $100,000 – $1,500,000 in patient capital for small and growing businesses in healthcare, education, agriculture, and manufacturing.',
-      },
-      {
-        title: 'Shell LiveWIRE Nigeria',
-        description:
-          'Offers up to ₦10,000,000 for young entrepreneurs in energy, technology, and agriculture, alongside incubation support.',
-      },
-      {
-        title: 'AWIEF Growth Accelerator',
-        description:
-          'Supports women entrepreneurs with $10,000 – $25,000 grants, business development training, and investor readiness support.',
-      },
-      {
-        title: 'USAID Power Africa Off-Grid Energy Challenge',
-        description:
-          'Provides up to $100,000 for renewable energy companies delivering off-grid solutions to underserved communities.',
-      },
+      { title: 'Tony Elumelu Foundation Entrepreneurship Programme', description: '$5,000 in seed funding, mentorship, and business training for African entrepreneurs. Applications open annually via TEFConnect.' },
+      { title: "Africa's Young Entrepreneur Empowerment Nigeria (AYEEN)", description: 'Awards grants ranging from hundreds of thousands to millions of naira to innovative entrepreneurs across Nigeria.' },
+      { title: 'GroFin Fund', description: '$100,000 – $1,500,000 in patient capital for small and growing businesses in healthcare, education, agriculture, and manufacturing.' },
+      { title: 'Shell LiveWIRE Nigeria', description: 'Up to ₦10,000,000 for young entrepreneurs in energy, technology, and agriculture, alongside incubation support.' },
+      { title: 'AWIEF Growth Accelerator', description: '$10,000 – $25,000 grants, business development training, and investor readiness support for women entrepreneurs.' },
+      { title: 'USAID Power Africa Off-Grid Energy Challenge', description: 'Up to $100,000 for renewable energy companies delivering off-grid solutions to underserved communities.' },
     ],
   },
   {
-    id: 'pan-african',
-    title: 'Pan-African Opportunities',
+    id: 'pan-african', title: 'Pan-African Opportunities',
     items: [
-      {
-        title: 'Anzisha Prize',
-        description:
-          'Awards up to $25,000 for young entrepreneurs (ages 15–22) leading community-driven innovation and job creation.',
-      },
-      {
-        title: 'African Entrepreneurship Award',
-        description:
-          'Delivers mentorship and funding to innovative, tech-driven African businesses addressing critical local challenges.',
-      },
+      { title: 'Anzisha Prize', description: 'Up to $25,000 for young entrepreneurs (ages 15–22) leading community-driven innovation and job creation.' },
+      { title: 'African Entrepreneurship Award', description: 'Mentorship and funding to innovative, tech-driven African businesses addressing critical local challenges.' },
     ],
   },
   {
-    id: 'application-tips',
-    title: 'Application Tips',
+    id: 'application-tips', title: 'Application Tips',
     summary: 'Position your business to stand out during competitive grant rounds.',
     items: [
       {
@@ -167,96 +91,25 @@ const BUSINESS_AIDS_RESOURCES: GrowthResourceSection[] = [
     ],
   },
   {
-    id: 'women-focused',
-    title: 'For Women',
+    id: 'women-focused', title: 'For Women',
     items: [
-      {
-        title: 'African Women Innovation and Entrepreneurship Forum (AWIEF) Grants',
-        description:
-          'Supports innovative women-led businesses operating in Africa for at least three years, with funding of $10,000 – $25,000 plus mentorship.',
-      },
-      {
-        title: 'Womenpreneur Pitch-a-Ton Africa (Access Bank)',
-        description:
-          'Empowers Nigerian women entrepreneurs with business training, mentorship, and grants of up to ₦5,000,000.',
-      },
-      {
-        title: 'Women in Tech Africa (WiTA) Funding',
-        description:
-          'Provides capital, global exposure, and mentorship to women-led technology startups across Africa.',
-      },
-      {
-        title: 'Cherie Blair Foundation for Women',
-        description:
-          'Delivers mentoring, training, and financial support to women entrepreneurs, with a focus on marginalised communities.',
-      },
-      {
-        title: 'MamaCash',
-        description:
-          "Funds grassroots, women-led initiatives advancing women's rights and economic independence throughout Africa.",
-      },
-      {
-        title: 'Female Entrepreneurs Grant by Aliko Dangote Foundation',
-        description:
-          'Offers ₦100,000 – ₦1,000,000 to low-income women in Nigeria to expand or stabilise their businesses.',
-      },
-      {
-        title: 'Flourish Africa Grant',
-        description:
-          'Provides Nigerian women with grants and comprehensive skills-building programmes to scale startups and established ventures.',
-      },
+      { title: 'AWIEF Grants', description: '$10,000 – $25,000 plus mentorship for innovative women-led businesses operating in Africa for at least three years.' },
+      { title: 'Womenpreneur Pitch-a-Ton Africa (Access Bank)', description: 'Training, mentorship, and grants up to ₦5,000,000 for Nigerian women entrepreneurs.' },
+      { title: 'Women in Tech Africa (WiTA) Funding', description: 'Capital, global exposure, and mentorship to women-led technology startups across Africa.' },
+      { title: 'Cherie Blair Foundation for Women', description: 'Mentoring, training, and financial support to women entrepreneurs in marginalised communities.' },
+      { title: 'Female Entrepreneurs Grant by Aliko Dangote Foundation', description: '₦100,000 – ₦1,000,000 to low-income women in Nigeria to expand or stabilise their businesses.' },
+      { title: 'Flourish Africa Grant', description: 'Grants and comprehensive skills-building programmes to help Nigerian women scale startups and established ventures.' },
     ],
   },
   {
-    id: 'geo-political',
-    title: 'Grants According to Geo-Political Zones',
+    id: 'geo-political', title: 'Grants by Geo-Political Zone',
     items: [
-      {
-        title: 'North-West Region (Kano, Kaduna, Sokoto, Katsina, etc.)',
-        bullets: [
-          'Development Bank of Nigeria (DBN) Entrepreneurship Grant: Financial assistance for MSMEs in high-growth sectors such as agriculture and technology.',
-          'Youth Empowerment Nigeria (YEN): Skill acquisition programmes and seed grants tailored to young entrepreneurs in states like Kano and Kaduna.',
-          'National Directorate of Employment (NDE) Grants: Micro-business support for youth and women across the North-West.',
-        ],
-      },
-      {
-        title: 'North-East Region (Borno, Yobe, Adamawa, Bauchi, etc.)',
-        bullets: [
-          'North-East Development Commission (NEDC): Grants and rebuilding funds for entrepreneurs in conflict-affected communities.',
-          "Women's Entrepreneurship Grant Programme: Financial support, training, and mentorship dedicated to women in the North-East.",
-        ],
-      },
-      {
-        title: 'North-Central Region (Abuja, Kogi, Kwara, Benue, etc.)',
-        bullets: [
-          'Tony Elumelu Foundation Entrepreneurship Programme: $5,000 seed capital for high-potential ventures across the region.',
-          'Youth Investment Fund (YIF): Up to ₦3,000,000 for young entrepreneurs in Abuja, Kwara, Kogi, and neighbouring states.',
-          'Industrial Training Fund (ITF): Grants and capacity-building initiatives for artisans and SMEs to enhance productivity.',
-        ],
-      },
-      {
-        title: 'South-West Region (Lagos, Ogun, Oyo, Ekiti, Ondo, etc.)',
-        bullets: [
-          'Lagos State Employment Trust Fund (LSETF): Grants up to ₦5,000,000 alongside capacity-building support for MSMEs.',
-          'Womenpreneur Pitch-a-Ton Africa: Training and grants up to ₦5,000,000 for women entrepreneurs across the region.',
-          'Digital and Creative Enterprises (iDiCE) Program: Grants and accelerator-style support for tech and creative startups.',
-        ],
-      },
-      {
-        title: 'South-East Region (Anambra, Enugu, Imo, Ebonyi, Abia)',
-        bullets: [
-          'Shell LiveWIRE Nigeria: Up to ₦10,000,000 for youth and women entrepreneurs within oil-producing communities.',
-          'Innoson Kiara Academy Grants: Technical training and business development funds targeting aspiring industrialists.',
-          'GroFin Fund: Long-term growth finance ranging from $100,000 – $1,500,000 for MSMEs in key sectors.',
-        ],
-      },
-      {
-        title: 'South-South Region (Rivers, Delta, Akwa Ibom, Bayelsa, Cross River)',
-        bullets: [
-          'Niger Delta Development Commission (NDDC) Grants: Funding for MSMEs and community-led projects across the Niger Delta.',
-          'Women Entrepreneurship Fund (Shell LiveWIRE Nigeria): Up to ₦10,000,000 plus mentorship for sustainable women-led ventures.',
-        ],
-      },
+      { title: 'North-West (Kano, Kaduna, Sokoto, Katsina…)', bullets: ['Development Bank of Nigeria (DBN) Entrepreneurship Grant for MSMEs in agriculture and technology.', 'Youth Empowerment Nigeria (YEN): Skill acquisition and seed grants for young entrepreneurs.', 'National Directorate of Employment (NDE) Grants for micro-businesses across youth and women.'] },
+      { title: 'North-East (Borno, Yobe, Adamawa, Bauchi…)', bullets: ['North-East Development Commission (NEDC): Grants for conflict-affected communities.', "Women's Entrepreneurship Grant Programme: Financial support and mentorship for women in the North-East."] },
+      { title: 'North-Central (Abuja, Kogi, Kwara, Benue…)', bullets: ['Tony Elumelu Foundation: $5,000 seed capital for high-potential ventures.', 'Youth Investment Fund (YIF): Up to ₦3,000,000 for young entrepreneurs.', 'Industrial Training Fund (ITF): Grants and capacity-building for artisans and SMEs.'] },
+      { title: 'South-West (Lagos, Ogun, Oyo, Ekiti, Ondo…)', bullets: ['LSETF: Grants up to ₦5,000,000 alongside capacity-building for MSMEs.', 'Womenpreneur Pitch-a-Ton Africa: Grants up to ₦5,000,000 for women entrepreneurs.', 'iDiCE Program: Grants and accelerator support for tech and creative startups.'] },
+      { title: 'South-East (Anambra, Enugu, Imo, Ebonyi, Abia)', bullets: ['Shell LiveWIRE Nigeria: Up to ₦10,000,000 for youth and women in oil-producing communities.', 'Innoson Kiara Academy Grants: Technical training and business development funds.', 'GroFin Fund: $100,000 – $1,500,000 for MSMEs in key sectors.'] },
+      { title: 'South-South (Rivers, Delta, Akwa Ibom, Bayelsa, Cross River)', bullets: ['NDDC Grants: Funding for MSMEs and community-led projects across the Niger Delta.', 'Women Entrepreneurship Fund (Shell LiveWIRE): Up to ₦10,000,000 plus mentorship.'] },
     ],
   },
 ];
@@ -268,8 +121,8 @@ export default function GrowthHubScreen() {
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('all');
-
   const [activeSection, setActiveSection] = useState<GrowthSectionId>('grants');
+  const { grants, categories } = useGrantsData();
 
   const handleSectionChange = (sectionId: GrowthSectionId) => {
     setActiveSection(sectionId);
@@ -282,395 +135,92 @@ export default function GrowthHubScreen() {
     }
   };
 
-  // Sample grants data
-  const grants: Grant[] = useMemo(
-    () => [
-      {
-        id: '1',
-        title: 'Tony Elumelu Foundation Entrepreneurship Programme',
-        organization: 'Tony Elumelu Foundation',
-        amount: '$5,000',
-        category: 'Business',
-        deadline: 'Dec 31, 2024',
-        status: 'open',
-        description: 'The TEF Entrepreneurship Programme is open to entrepreneurs from all 54 African countries. The Programme provides training, mentoring, and seed capital funding of $5,000 to African entrepreneurs.',
-        requirements: [
-          'Must be between 18-35 years old',
-          'Business must be less than 3 years old',
-          'Must be an African citizen',
-          'Must have a viable business plan',
-        ],
-        eligibility: [
-          'African entrepreneurs',
-          'Business owners',
-          'Startups and MSMEs',
-          'All sectors welcome',
-        ],
-        applicationLink: 'https://tefconnect.com',
-      },
-      {
-        id: '2',
-        title: 'YouWiN! Connect Program',
-        organization: 'Federal Government of Nigeria',
-        amount: '₦1,000,000 - ₦10,000,000',
-        category: 'Business',
-        deadline: 'Nov 30, 2024',
-        status: 'closing-soon',
-        description: 'Youth Enterprise With Innovation in Nigeria (YouWiN!) Connect is designed to encourage and support aspiring and early-stage entrepreneurs to develop and execute business ideas that will generate employment.',
-        requirements: [
-          'Nigerian citizen between 18-45 years',
-          'Must have NIN',
-          'Business plan required',
-          'Must create employment opportunities',
-        ],
-        eligibility: [
-          'Nigerian youth entrepreneurs',
-          'First-time applicants',
-          'Innovative business ideas',
-          'Job creation focus',
-        ],
-      },
-      {
-        id: '3',
-        title: 'Google for Startups Black Founders Fund',
-        organization: 'Google',
-        amount: '$100,000',
-        category: 'Technology',
-        deadline: 'Jan 15, 2025',
-        status: 'open',
-        description: 'Non-dilutive cash awards and hands-on support for Black-led startups building technology companies across Africa.',
-        requirements: [
-          'Black-founded startup',
-          'Technology-focused company',
-          'Registered business entity',
-          'At least $500K in revenue or funding',
-        ],
-        eligibility: [
-          'African startups',
-          'Black founders',
-          'Tech companies',
-          'Growth stage',
-        ],
-      },
-      {
-        id: '4',
-        title: 'Mastercard Foundation Scholars Program',
-        organization: 'Mastercard Foundation',
-        amount: 'Full Scholarship',
-        category: 'Education',
-        deadline: 'Feb 28, 2025',
-        status: 'open',
-        description: 'The Mastercard Foundation Scholars Program provides academically talented yet economically disadvantaged young people with the opportunity to complete their education.',
-        requirements: [
-          'Academic excellence',
-          'Financial need',
-          'Leadership potential',
-          'Commitment to giving back',
-        ],
-        eligibility: [
-          'African students',
-          'Undergraduate/Graduate',
-          'Age 18-30',
-          'Strong academic record',
-        ],
-      },
-      {
-        id: '5',
-        title: 'CBN Youth Entrepreneurship Development Programme',
-        organization: 'Central Bank of Nigeria',
-        amount: '₦250,000 - ₦3,000,000',
-        category: 'Agriculture',
-        deadline: 'Dec 15, 2024',
-        status: 'open',
-        description: 'YEDP aims to address youth unemployment by providing financial assistance and business training to young Nigerians in agriculture and agro-processing.',
-        requirements: [
-          'Age 18-35 years',
-          'Nigerian citizen',
-          'Valid BVN',
-          'Agriculture/agro-processing focus',
-        ],
-        eligibility: [
-          'Youth entrepreneurs',
-          'Agriculture sector',
-          'Nigerian nationals',
-          'Business plan required',
-        ],
-      },
-      {
-        id: '6',
-        title: 'She Leads Africa Accelerator',
-        organization: 'She Leads Africa',
-        amount: '$10,000',
-        category: 'Women',
-        deadline: 'Jan 31, 2025',
-        status: 'open',
-        description: 'Supporting women-led businesses across Africa with funding, mentorship, and access to networks.',
-        requirements: [
-          'Woman founder/co-founder',
-          'Business operational for 1+ year',
-          'Revenue generating',
-          'Based in Africa',
-        ],
-        eligibility: [
-          'Women entrepreneurs',
-          'African-based businesses',
-          'All sectors',
-          'Growth-stage companies',
-        ],
-      },
-      {
-        id: '7',
-        title: 'AfDB Youth Entrepreneurship and Innovation Multi-Donor Trust Fund',
-        organization: 'African Development Bank',
-        amount: '$50,000 - $150,000',
-        category: 'Innovation',
-        deadline: 'Nov 20, 2024',
-        status: 'closing-soon',
-        description: 'Supports innovative youth-led enterprises that can scale and create jobs across Africa.',
-        requirements: [
-          'Youth-led enterprise (founder <35)',
-          'Innovative business model',
-          'Scalability potential',
-          'Job creation focus',
-        ],
-        eligibility: [
-          'African youth',
-          'Innovative startups',
-          'All sectors',
-          'Early to growth stage',
-        ],
-      },
-      {
-        id: '8',
-        title: 'UNICEF Innovation Fund',
-        organization: 'UNICEF',
-        amount: '$100,000',
-        category: 'Social Impact',
-        deadline: 'Rolling',
-        status: 'open',
-        description: 'Invests in early-stage open-source technology solutions that have the potential to positively impact children and young people.',
-        requirements: [
-          'Open-source technology',
-          'Prototype developed',
-          'Team of 2-7 people',
-          'Focus on children/youth impact',
-        ],
-        eligibility: [
-          'Tech startups',
-          'Social impact focus',
-          'Developing countries',
-          'Open-source commitment',
-        ],
-      },
-    ],
-    []
-  );
-
-  const categories: GrantCategory[] = useMemo(
-    () => [
-      { id: 'all', name: 'All Grants', icon: 'apps', color: '#3b82f6', count: grants.length },
-      {
-        id: 'business',
-        name: 'Business',
-        icon: 'briefcase',
-        color: '#8b5cf6',
-        count: grants.filter((g) => g.category === 'Business').length,
-      },
-      {
-        id: 'technology',
-        name: 'Technology',
-        icon: 'laptop',
-        color: '#06b6d4',
-        count: grants.filter((g) => g.category === 'Technology').length,
-      },
-      {
-        id: 'education',
-        name: 'Education',
-        icon: 'school',
-        color: '#10b981',
-        count: grants.filter((g) => g.category === 'Education').length,
-      },
-      {
-        id: 'agriculture',
-        name: 'Agriculture',
-        icon: 'leaf',
-        color: '#84cc16',
-        count: grants.filter((g) => g.category === 'Agriculture').length,
-      },
-      {
-        id: 'women',
-        name: 'Women',
-        icon: 'woman',
-        color: '#ec4899',
-        count: grants.filter((g) => g.category === 'Women').length,
-      },
-      {
-        id: 'innovation',
-        name: 'Innovation',
-        icon: 'bulb-outline',
-        color: '#f59e0b',
-        count: grants.filter((g) => g.category === 'Innovation').length,
-      },
-      {
-        id: 'social-impact',
-        name: 'Social Impact',
-        icon: 'heart-outline',
-        color: '#ef4444',
-        count: grants.filter((g) => g.category === 'Social Impact').length,
-      },
-    ],
-    [grants]
-  );
-
-  // Filter grants
   const filteredGrants = useMemo(() => {
     let filtered = grants;
-
-    // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(
-        (g) => g.category.toLowerCase() === selectedCategory.toLowerCase() || 
-               (selectedCategory === 'social-impact' && g.category === 'Social Impact') ||
-               (selectedCategory === 'innovation' && g.category === 'Innovation')
+      filtered = filtered.filter(g =>
+        g.category.toLowerCase() === selectedCategory.toLowerCase() ||
+        (selectedCategory === 'social-impact' && g.category === 'Social Impact') ||
+        (selectedCategory === 'innovation' && g.category === 'Innovation')
       );
     }
-
-    // Filter by search query
     if (searchQuery.trim()) {
-      filtered = filtered.filter(
-        (g) =>
-          g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          g.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          g.category.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(g =>
+        g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        g.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        g.category.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-
-    // Filter by status
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter((g) => g.status === filterStatus);
-    }
-
+    if (filterStatus !== 'all') filtered = filtered.filter(g => g.status === filterStatus);
     return filtered;
   }, [grants, selectedCategory, searchQuery, filterStatus]);
 
   const sectionSubtitle = useMemo(() => {
-    switch (activeSection) {
-      case 'business-aids':
-        return 'Discover incentives, tools, and programmes to strengthen your business foundation.';
-      case 'training-support':
-        return 'Access accelerators, mentorship, and skill-building opportunities.';
-      default:
-        return `${filteredGrants.length} grant opportunities available`;
-    }
+    if (activeSection === 'business-aids') return 'Discover incentives and tools to strengthen your business.';
+    if (activeSection === 'training-support') return 'Access accelerators, mentorship, and skill-building.';
+    return `${filteredGrants.length} grant opportunities available`;
   }, [activeSection, filteredGrants.length]);
 
-  const activeSectionMeta = useMemo(() => GROWTH_SECTIONS.find((section) => section.id === activeSection), [activeSection]);
-
-  const searchPlaceholder = activeSection === 'grants' ? 'Search grants...' : 'Search growth resources...';
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'open':
-        return { bg: 'bg-green-100', text: 'text-green-700', dot: '#10b981' };
-      case 'closing-soon':
-        return { bg: 'bg-orange-100', text: 'text-orange-700', dot: '#f97316' };
-      case 'closed':
-        return { bg: 'bg-gray-100', text: 'text-gray-700', dot: '#6b7280' };
-      default:
-        return { bg: 'bg-blue-100', text: 'text-blue-700', dot: '#3b82f6' };
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'open':
-        return 'Open';
-      case 'closing-soon':
-        return 'Closing Soon';
-      case 'closed':
-        return 'Closed';
-      default:
-        return status;
-    }
+  const getStatusStyle = (status: string) => {
+    if (status === 'open') return { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: '#10b981', label: 'Open' };
+    if (status === 'closing-soon') return { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: '#f59e0b', label: 'Closing soon' };
+    return { bg: 'bg-white/10', text: 'text-white/40', dot: '#6b7280', label: 'Closed' };
   };
 
   return (
-    <SafeAreaView style={tw`w-full h-full bg-gray-50`}>
-      <StatusBar style='light' />
+    <SafeAreaView style={tw`flex-1 bg-[${DARK_BG}]`}>
+      <StatusBar style="light" />
 
-      {/* Header with Gradient */}
-      <LinearGradient
-        colors={[DEEP_PURPLE, '#6d28d9']}
-        style={tw`px-4 py-6 h-auto`}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={tw`flex-row justify-between items-center mb-4`}>
-          <View>
-            <Text style={tw`text-white text-2xl font-bold`}>Growth Hub</Text>
-            <Text style={tw`text-white/80 text-sm mt-1`}>{sectionSubtitle}</Text>
-            {activeSectionMeta?.description ? (
-              <Text style={tw`text-white/60 text-xs mt-1`}>{activeSectionMeta.description}</Text>
-            ) : null}
+      {/* ── Header ── */}
+      <View style={tw`bg-violet-700 px-5 pt-8 pb-5`}>
+        <View style={tw`flex-row justify-between items-start mb-4`}>
+          <View style={tw`flex-1 mr-3`}>
+            <Text style={tw`text-white text-[22px] font-bold tracking-tight`}>Growth Hub</Text>
+            <Text style={tw`text-white/55 text-[12px] mt-1`}>{sectionSubtitle}</Text>
           </View>
           {activeSection === 'grants' && (
             <TouchableOpacity
-              style={tw`bg-white/20 p-3 rounded-full`}
+              style={tw`w-[38px] h-[38px] rounded-xl bg-white/15 border border-white/15 items-center justify-center`}
               onPress={() => setShowFilterModal(true)}
               activeOpacity={0.7}
-              accessibilityRole="button"
-              accessibilityLabel="Filter grants"
             >
-              <Ionicons name="filter" size={20} color="#fff" />
+              <Ionicons name="filter" size={18} color="#fff" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Search Bar */}
-        <View style={tw`bg-white/20 rounded-2xl px-4 py-3 flex-row items-center`}>
-          <Ionicons name="search" size={20} color="#fff" />
+        {/* Search */}
+        <View style={tw`bg-white/12 border border-white/15 rounded-2xl px-4 h-[46px] flex-row items-center`}>
+          <Ionicons name="search-outline" size={17} color="rgba(255,255,255,0.4)" />
           <TextInput
-            style={tw`flex-1 ml-3 text-white text-base`}
-            placeholder={searchPlaceholder}
-            placeholderTextColor="rgba(255,255,255,0.7)"
+            style={tw`flex-1 ml-2.5 text-white text-[14px]`}
+            placeholder={activeSection === 'grants' ? 'Search grants...' : 'Search resources...'}
+            placeholderTextColor="rgba(255,255,255,0.3)"
             value={searchQuery}
             onChangeText={setSearchQuery}
             editable={activeSection === 'grants'}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')} activeOpacity={0.7}>
-              <Ionicons name="close-circle" size={20} color="#fff" />
+              <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.4)" />
             </TouchableOpacity>
           )}
         </View>
-      </LinearGradient>
+      </View>
 
-      {/* Growth Sections */}
-      <View style={tw`bg-white border-b border-gray-100`}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={tw`px-4 gap-2`}
-          style={tw`py-3`}
-        >
-          {GROWTH_SECTIONS.map((section) => {
+      {/* ── Section tabs ── */}
+      <View style={tw`bg-[#0a0a18] border-b border-white/7`}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-5 gap-2`} style={tw`py-3`}>
+          {GROWTH_SECTIONS.map(section => {
             const isActive = activeSection === section.id;
             return (
               <TouchableOpacity
                 key={section.id}
-                style={[
-                  tw`px-4 py-2 rounded-full`,
-                  isActive ? tw`bg-purple-600` : tw`bg-gray-100`,
-                ]}
+                style={tw`px-4 py-2 rounded-full ${isActive ? 'bg-violet-600' : 'bg-white/7 border border-white/10'}`}
                 onPress={() => handleSectionChange(section.id)}
                 activeOpacity={0.7}
               >
-                <Text
-                  style={[
-                    tw`text-sm font-semibold`,
-                    isActive ? tw`text-white` : tw`text-gray-700`,
-                  ]}
-                >
+                <Text style={tw`text-[13px] font-semibold ${isActive ? 'text-white' : 'text-white/45'}`}>
                   {section.label}
                 </Text>
               </TouchableOpacity>
@@ -679,60 +229,20 @@ export default function GrowthHubScreen() {
         </ScrollView>
 
         {activeSection === 'grants' && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={tw`px-4 gap-2 pb-3`}
-          >
-            {categories.map((category) => {
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={tw`px-5 gap-2 pb-3`}>
+            {categories.map(category => {
               const isSelected = selectedCategory === category.id;
               return (
                 <TouchableOpacity
                   key={category.id}
-                  style={[
-                    tw`flex-row items-center px-4 py-2.5 rounded-full`,
-                    isSelected
-                      ? tw`bg-purple-600`
-                      : tw`bg-gray-100`,
-                    {
-                      shadowColor: isSelected ? '#7c3aed' : '#000',
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: isSelected ? 0.2 : 0.05,
-                      shadowRadius: 3,
-                      elevation: isSelected ? 3 : 1,
-                    },
-                  ]}
+                  style={tw`flex-row items-center px-3.5 py-2 rounded-full ${isSelected ? 'bg-violet-600' : 'bg-white/5 border border-white/10'}`}
                   onPress={() => setSelectedCategory(category.id)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons
-                    name={category.icon}
-                    size={18}
-                    color={isSelected ? '#fff' : category.color}
-                    style={tw`mr-2`}
-                  />
-                  <Text
-                    style={[
-                      tw`font-semibold text-sm`,
-                      isSelected ? tw`text-white` : tw`text-gray-700`,
-                    ]}
-                  >
-                    {category.name}
-                  </Text>
-                  <View
-                    style={[
-                      tw`ml-2 px-2 py-0.5 rounded-full`,
-                      isSelected ? tw`bg-white/30` : tw`bg-gray-200`,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        tw`text-xs font-bold`,
-                        isSelected ? tw`text-white` : tw`text-gray-600`,
-                      ]}
-                    >
-                      {category.count}
-                    </Text>
+                  <Ionicons name={category.icon} size={15} color={isSelected ? '#fff' : category.color} style={tw`mr-1.5`} />
+                  <Text style={tw`text-[12px] font-semibold ${isSelected ? 'text-white' : 'text-white/50'}`}>{category.name}</Text>
+                  <View style={tw`ml-1.5 px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20' : 'bg-white/8'}`}>
+                    <Text style={tw`text-[11px] font-bold ${isSelected ? 'text-white' : 'text-white/40'}`}>{category.count}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -741,121 +251,81 @@ export default function GrowthHubScreen() {
         )}
       </View>
 
+      {/* ── Content ── */}
       <View style={tw`flex-1`}>
+
+        {/* Grants list */}
         {activeSection === 'grants' && (
-          <ScrollView
-            style={tw`flex-1 px-3 pt-4`}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={tw`pb-8`}
-          >
-            {filteredGrants.length > 0 ? (
-              filteredGrants.map((grant) => {
-                const statusColors = getStatusColor(grant.status);
-                return (
-                  <TouchableOpacity
-                    key={grant.id}
-                    style={[
-                      tw`bg-white rounded-2xl p-5 mb-4`,
-                      { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }
-                    ]}
-                    onPress={() => setSelectedGrant(grant)}
-                    activeOpacity={0.7}
-                  >
-                    {/* Header */}
-                    <View style={tw`flex-row justify-between items-start mb-3`}>
-                      <View style={tw`flex-1 mr-3`}>
-                        <Text style={tw`text-base font-bold text-gray-900 mb-1`}>
-                          {grant.title}
-                        </Text>
-                        <Text style={tw`text-sm text-gray-600`}>{grant.organization}</Text>
-                      </View>
-                      <View style={[tw`px-3 py-1.5 rounded-full flex-row items-center`, tw`${statusColors.bg}`]}>
-                        <View
-                          style={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: 3,
-                            backgroundColor: statusColors.dot,
-                            marginRight: 6,
-                          }}
-                        />
-                        <Text style={[tw`text-xs font-semibold`, tw`${statusColors.text}`]}>
-                          {getStatusLabel(grant.status)}
-                        </Text>
-                      </View>
+          <ScrollView style={tw`flex-1 px-5 pt-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10`}>
+            {filteredGrants.length > 0 ? filteredGrants.map(grant => {
+              const s = getStatusStyle(grant.status);
+              return (
+                <TouchableOpacity
+                  key={grant.id}
+                  style={tw`bg-white/4 border border-white/7 rounded-2xl p-4 mb-3`}
+                  onPress={() => setSelectedGrant(grant)}
+                  activeOpacity={0.75}
+                >
+                  <View style={tw`flex-row justify-between items-start mb-3`}>
+                    <View style={tw`flex-1 mr-3`}>
+                      <Text style={tw`text-white text-[14px] font-semibold leading-5 mb-0.5`}>{grant.title}</Text>
+                      <Text style={tw`text-white/40 text-[12px]`}>{grant.organization}</Text>
                     </View>
+                    <View style={tw`flex-row items-center px-2.5 py-1 rounded-full ${s.bg}`}>
+                      <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: s.dot, marginRight: 5 }} />
+                      <Text style={tw`text-[11px] font-semibold ${s.text}`}>{s.label}</Text>
+                    </View>
+                  </View>
 
-                    {/* Amount & Category */}
-                    <View style={tw`flex-row items-center mb-3`}>
-                      <View style={tw`bg-purple-50 px-3 py-1.5 rounded-full mr-2`}>
-                        <Text style={tw`text-purple-700 font-bold text-sm`}>{grant.amount}</Text>
-                      </View>
-                      <View style={tw`bg-gray-100 px-3 py-1.5 rounded-full`}>
-                        <Text style={tw`text-gray-700 text-xs font-semibold`}>{grant.category}</Text>
-                      </View>
+                  <View style={tw`flex-row items-center gap-2 mb-3`}>
+                    <View style={tw`bg-violet-500/15 border border-violet-500/20 px-3 py-1 rounded-full`}>
+                      <Text style={tw`text-violet-300 font-bold text-[12px]`}>{grant.amount}</Text>
                     </View>
+                    <View style={tw`bg-white/7 border border-white/10 px-3 py-1 rounded-full`}>
+                      <Text style={tw`text-white/45 text-[11px] font-semibold`}>{grant.category}</Text>
+                    </View>
+                  </View>
 
-                    {/* Deadline */}
-                    <View style={tw`flex-row items-center`}>
-                      <Ionicons name="calendar-outline" size={16} color="#6b7280" />
-                      <Text style={tw`text-gray-600 text-sm ml-2`}>
-                        Deadline: {grant.deadline}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })
-            ) : (
-              <View style={tw`bg-white rounded-2xl p-8 items-center mt-8`}>
-                <Ionicons name="search-outline" size={64} color="#d1d5db" />
-                <Text style={tw`text-gray-400 text-center mt-4 text-base`}>
-                  No grants found
-                </Text>
-                <Text style={tw`text-gray-400 text-center mt-2 text-sm`}>
-                  Try adjusting your search or filters
-                </Text>
+                  <View style={tw`flex-row items-center gap-1.5`}>
+                    <Ionicons name="calendar-outline" size={13} color="rgba(255,255,255,0.3)" />
+                    <Text style={tw`text-white/30 text-[12px]`}>Deadline: {grant.deadline}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }) : (
+              <View style={tw`bg-white/4 border border-white/7 rounded-2xl p-10 items-center mt-6`}>
+                <Ionicons name="search-outline" size={48} color="rgba(255,255,255,0.15)" />
+                <Text style={tw`text-white/30 text-[14px] mt-4`}>No grants found</Text>
+                <Text style={tw`text-white/20 text-[12px] mt-1`}>Try adjusting your search or filters</Text>
               </View>
             )}
           </ScrollView>
         )}
 
+        {/* Business aids */}
         {activeSection === 'business-aids' && (
-          <ScrollView
-            style={tw`flex-1 px-3 pt-4`}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={tw`pb-10`}
-          >
-            {BUSINESS_AIDS_RESOURCES.map((section) => (
-              <View key={section.id} style={tw`mb-8`}>
-                <View style={tw`mb-3`}>
-                  <Text style={tw`text-lg font-bold text-gray-900`}>{section.title}</Text>
-                  {section.summary ? (
-                    <Text style={tw`text-gray-600 text-sm mt-1 leading-5`}>{section.summary}</Text>
-                  ) : null}
-                </View>
-                <View style={tw`gap-3`}>
-                  {section.items.map((item, itemIndex) => (
-                    <View
-                      key={`${section.id}-${itemIndex}`}
-                      style={tw`bg-white border border-gray-100 rounded-2xl p-5 shadow-sm`}
-                    >
-                      <Text style={tw`text-gray-900 font-semibold text-base`}>{item.title}</Text>
-                      {item.description ? (
-                        <Text style={tw`text-gray-600 text-sm leading-5 mt-2`}>{item.description}</Text>
-                      ) : null}
-                      {item.bullets ? (
-                        <View style={tw`mt-3 gap-2`}>
-                          {item.bullets.map((bullet, bulletIndex) => (
-                            <View
-                              key={`${section.id}-${itemIndex}-bullet-${bulletIndex}`}
-                              style={tw`flex-row items-start`}
-                            >
-                              <View style={tw`w-2.5 h-2.5 rounded-full bg-purple-500 mt-1 mr-2`} />
-                              <Text style={tw`text-gray-600 text-sm flex-1 leading-5`}>{bullet}</Text>
+          <ScrollView style={tw`flex-1 px-5 pt-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10`}>
+            {BUSINESS_AIDS_RESOURCES.map(section => (
+              <View key={section.id} style={tw`mb-7`}>
+                <Text style={tw`text-white text-[15px] font-bold tracking-tight mb-1`}>{section.title}</Text>
+                {section.summary && <Text style={tw`text-white/35 text-[12px] leading-5 mb-3`}>{section.summary}</Text>}
+                <View style={tw`gap-2.5`}>
+                  {section.items.map((item, i) => (
+                    <View key={i} style={tw`bg-white/4 border border-white/7 rounded-2xl p-4`}>
+                      <Text style={tw`text-white text-[13px] font-semibold mb-1.5`}>{item.title}</Text>
+                      {item.description && (
+                        <Text style={tw`text-white/40 text-[12px] leading-5`}>{item.description}</Text>
+                      )}
+                      {item.bullets && (
+                        <View style={tw`mt-2 gap-2`}>
+                          {item.bullets.map((bullet, bi) => (
+                            <View key={bi} style={tw`flex-row items-start gap-2`}>
+                              <View style={tw`w-1.5 h-1.5 rounded-full bg-violet-400 mt-1.5 flex-shrink-0`} />
+                              <Text style={tw`text-white/40 text-[12px] flex-1 leading-5`}>{bullet}</Text>
                             </View>
                           ))}
                         </View>
-                      ) : null}
+                      )}
                     </View>
                   ))}
                 </View>
@@ -864,15 +334,15 @@ export default function GrowthHubScreen() {
           </ScrollView>
         )}
 
+        {/* Training & support */}
         {activeSection === 'training-support' && (
-          <ScrollView
-            style={tw`flex-1 px-3 pt-4`}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={tw`pb-10`}
-          >
-            <View style={tw`bg-white border border-gray-100 rounded-2xl p-5 shadow-sm`}>
-              <Text style={tw`text-gray-900 font-semibold text-base`}>Training & Support</Text>
-              <Text style={tw`text-gray-600 text-sm leading-5 mt-2`}>
+          <ScrollView style={tw`flex-1 px-5 pt-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-10`}>
+            <View style={tw`bg-white/4 border border-white/7 rounded-2xl p-5`}>
+              <View style={tw`w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-500/20 items-center justify-center mb-3`}>
+                <Ionicons name="time-outline" size={20} color="#a78bfa" />
+              </View>
+              <Text style={tw`text-white text-[14px] font-semibold mb-2`}>Coming soon</Text>
+              <Text style={tw`text-white/35 text-[13px] leading-5`}>
                 We are curating a catalogue of accelerators, mentorship programmes, and digital training resources.
                 Check back soon for the latest opportunities designed to help your business scale.
               </Text>
@@ -881,159 +351,121 @@ export default function GrowthHubScreen() {
         )}
       </View>
 
-      {/* Grant Details Modal */}
-      <Modal
-        visible={selectedGrant !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setSelectedGrant(null)}
-      >
+      {/* ── Grant detail modal ── */}
+      <Modal visible={selectedGrant !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedGrant(null)}>
         {selectedGrant && (
-          <SafeAreaView style={tw`flex-1 bg-white`}>
-            <StatusBar style="dark" />
-            
-            {/* Modal Header */}
-            <View style={tw`px-4 py-4 border-b border-gray-100 flex-row justify-between items-center`}>
-              <Text style={tw`text-xl font-bold text-gray-900`}>Grant Details</Text>
+          <SafeAreaView style={tw`flex-1 bg-[${DARK_BG}]`}>
+            <StatusBar style="light" />
+
+            {/* Modal header */}
+            <View style={tw`px-5 py-4 border-b border-white/7 flex-row justify-between items-center`}>
+              <Text style={tw`text-white text-[17px] font-bold tracking-tight`}>Grant details</Text>
               <TouchableOpacity
                 onPress={() => setSelectedGrant(null)}
-                style={tw`p-2`}
+                style={tw`w-[34px] h-[34px] rounded-xl bg-white/7 items-center justify-center`}
                 activeOpacity={0.7}
-                accessibilityRole="button"
-                accessibilityLabel="Close"
               >
-                <Ionicons name="close" size={28} color="#000" />
+                <Ionicons name="close" size={18} color="rgba(255,255,255,0.7)" />
               </TouchableOpacity>
             </View>
 
-            <ScrollView
-              style={tw`flex-1 px-6 pt-6`}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={tw`pb-8`}
-            >
-              {/* Title & Organization */}
-              <Text style={tw`text-2xl font-bold text-gray-900 mb-2`}>
-                {selectedGrant.title}
-              </Text>
-              <Text style={tw`text-base text-gray-600 mb-4`}>
-                {selectedGrant.organization}
-              </Text>
+            <ScrollView style={tw`flex-1 px-5 pt-5`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
+              <Text style={tw`text-white text-[20px] font-bold tracking-tight leading-7 mb-1`}>{selectedGrant.title}</Text>
+              <Text style={tw`text-white/40 text-[13px] mb-5`}>{selectedGrant.organization}</Text>
 
-              {/* Status & Amount */}
+              {/* Amount & deadline */}
               <View style={tw`flex-row gap-3 mb-6`}>
-                <View style={tw`bg-purple-50 px-4 py-2 rounded-xl flex-1`}>
-                  <Text style={tw`text-purple-700 font-bold text-lg text-center`}>
-                    {selectedGrant.amount}
-                  </Text>
-                  <Text style={tw`text-purple-600 text-xs text-center mt-1`}>Grant Amount</Text>
+                <View style={tw`flex-1 bg-violet-500/15 border border-violet-500/20 rounded-2xl p-4`}>
+                  <Text style={tw`text-violet-300 font-bold text-[16px] text-center`}>{selectedGrant.amount}</Text>
+                  <Text style={tw`text-violet-400/60 text-[11px] text-center mt-1`}>Grant amount</Text>
                 </View>
-                <View style={tw`bg-orange-50 px-4 py-2 rounded-xl flex-1`}>
-                  <Text style={tw`text-orange-700 font-bold text-lg text-center`}>
-                    {selectedGrant.deadline}
-                  </Text>
-                  <Text style={tw`text-orange-600 text-xs text-center mt-1`}>Deadline</Text>
+                <View style={tw`flex-1 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4`}>
+                  <Text style={tw`text-amber-300 font-bold text-[16px] text-center`}>{selectedGrant.deadline}</Text>
+                  <Text style={tw`text-amber-400/60 text-[11px] text-center mt-1`}>Deadline</Text>
                 </View>
               </View>
 
               {/* Description */}
-              <View style={tw`mb-6`}>
-                <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Description</Text>
-                <Text style={tw`text-gray-700 leading-6`}>{selectedGrant.description}</Text>
+              <View style={tw`mb-5`}>
+                <Text style={tw`text-white text-[13px] font-semibold mb-2`}>Description</Text>
+                <Text style={tw`text-white/45 text-[13px] leading-6`}>{selectedGrant.description}</Text>
               </View>
 
               {/* Requirements */}
-              <View style={tw`mb-6`}>
-                <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Requirements</Text>
-                <View style={tw`bg-blue-50 rounded-xl p-4`}>
-                  {selectedGrant.requirements.map((req, index) => (
-                    <View key={index} style={tw`flex-row mb-2`}>
-                      <Ionicons name="checkmark-circle" size={20} color="#3b82f6" style={tw`mr-2 mt-0.5`} />
-                      <Text style={tw`text-gray-700 flex-1`}>{req}</Text>
+              <View style={tw`mb-5`}>
+                <Text style={tw`text-white text-[13px] font-semibold mb-2`}>Requirements</Text>
+                <View style={tw`bg-blue-500/10 border border-blue-500/15 rounded-2xl p-4 gap-2.5`}>
+                  {selectedGrant.requirements.map((req, i) => (
+                    <View key={i} style={tw`flex-row items-start gap-2`}>
+                      <Ionicons name="checkmark-circle" size={16} color="#60a5fa" style={tw`mt-0.5`} />
+                      <Text style={tw`text-white/55 text-[13px] flex-1 leading-5`}>{req}</Text>
                     </View>
                   ))}
                 </View>
               </View>
 
               {/* Eligibility */}
-              <View style={tw`mb-6`}>
-                <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Eligibility</Text>
+              <View style={tw`mb-4`}>
+                <Text style={tw`text-white text-[13px] font-semibold mb-2`}>Eligibility</Text>
                 <View style={tw`flex-row flex-wrap gap-2`}>
-                  {selectedGrant.eligibility.map((item, index) => (
-                    <View key={index} style={tw`bg-green-50 px-3 py-2 rounded-full`}>
-                      <Text style={tw`text-green-700 text-sm font-semibold`}>{item}</Text>
+                  {selectedGrant.eligibility.map((item, i) => (
+                    <View key={i} style={tw`bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full`}>
+                      <Text style={tw`text-emerald-400 text-[12px] font-semibold`}>{item}</Text>
                     </View>
                   ))}
                 </View>
               </View>
             </ScrollView>
 
-            {/* Apply Button */}
-            <View style={tw`px-6 py-4 border-t border-gray-100 bg-white`}>
+            {/* Apply button */}
+            <View style={tw`px-5 py-4 border-t border-white/7`}>
               <TouchableOpacity
-                style={tw`bg-purple-600 py-4 rounded-xl flex-row items-center justify-center shadow-lg`}
-                activeOpacity={0.8}
-                onPress={() => {
-                  if (selectedGrant.applicationLink) {
-                    alert(`Opening application link: ${selectedGrant.applicationLink}`);
-                  } else {
-                    alert('Application link not available');
-                  }
-                }}
+                style={tw`bg-violet-600 h-[52px] rounded-2xl flex-row items-center justify-center gap-2 mb-3`}
+                activeOpacity={0.85}
+                onPress={() => alert(selectedGrant.applicationLink ? `Opening: ${selectedGrant.applicationLink}` : 'Application link not available')}
               >
-                <Ionicons name="paper-plane" size={20} color="#fff" style={tw`mr-2`} />
-                <Text style={tw`text-white font-bold text-lg`}>Apply Now</Text>
+                <Ionicons name="paper-plane-outline" size={17} color="#fff" />
+                <Text style={tw`text-white font-semibold text-[15px]`}>Apply now</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={tw`mt-3 py-3`}
-                onPress={() => setSelectedGrant(null)}
-                activeOpacity={0.7}
-              >
-                <Text style={tw`text-gray-600 text-center font-semibold`}>Close</Text>
+              <TouchableOpacity style={tw`py-2 items-center`} onPress={() => setSelectedGrant(null)} activeOpacity={0.7}>
+                <Text style={tw`text-white/35 text-[13px] font-semibold`}>Close</Text>
               </TouchableOpacity>
             </View>
           </SafeAreaView>
         )}
       </Modal>
 
-      {/* Filter Modal */}
+      {/* ── Filter modal ── */}
       <Modal visible={showFilterModal} animationType="slide" transparent>
-        <View style={tw`flex-1 justify-end bg-black/50`}>
-          <View style={tw`bg-white rounded-t-3xl pt-6 pb-8`}>
-            <View style={tw`px-6 pb-4 border-b border-gray-100`}>
-              <View style={tw`flex-row justify-between items-center`}>
-                <Text style={tw`text-xl font-bold text-gray-900`}>Filter Grants</Text>
-                <TouchableOpacity onPress={() => setShowFilterModal(false)} activeOpacity={0.7}>
-                  <Ionicons name="close" size={28} color="#111827" />
-                </TouchableOpacity>
-              </View>
+        <View style={tw`flex-1 justify-end bg-black/60`}>
+          <View style={tw`bg-[#0f0f1e] border-t border-white/10 rounded-t-3xl pt-6 pb-10`}>
+            <View style={tw`px-5 pb-4 border-b border-white/7 flex-row justify-between items-center`}>
+              <Text style={tw`text-white text-[17px] font-bold tracking-tight`}>Filter grants</Text>
+              <TouchableOpacity
+                onPress={() => setShowFilterModal(false)}
+                style={tw`w-[34px] h-[34px] rounded-xl bg-white/7 items-center justify-center`}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={18} color="rgba(255,255,255,0.7)" />
+              </TouchableOpacity>
             </View>
 
-            <View style={tw`px-6 pt-6`}>
-              <Text style={tw`text-base font-bold text-gray-900 mb-3`}>Status</Text>
-              <View style={tw`gap-3 mb-6`}>
+            <View style={tw`px-5 pt-5`}>
+              <Text style={tw`text-white/55 text-[12px] font-semibold tracking-wide uppercase mb-3`}>Status</Text>
+              <View style={tw`gap-2.5 mb-6`}>
                 {[
-                  { value: 'all', label: 'All Status' },
+                  { value: 'all', label: 'All statuses' },
                   { value: 'open', label: 'Open' },
-                  { value: 'closing-soon', label: 'Closing Soon' },
+                  { value: 'closing-soon', label: 'Closing soon' },
                   { value: 'closed', label: 'Closed' },
-                ].map((option) => (
+                ].map(option => (
                   <TouchableOpacity
                     key={option.value}
-                    style={[
-                      tw`border-2 rounded-xl px-4 py-3`,
-                      filterStatus === option.value
-                        ? tw`border-purple-600 bg-purple-50`
-                        : tw`border-gray-200 bg-white`,
-                    ]}
+                    style={tw`border ${filterStatus === option.value ? 'border-violet-500/60 bg-violet-500/10' : 'border-white/10 bg-white/4'} rounded-2xl px-4 h-[48px] flex-row items-center`}
                     onPress={() => setFilterStatus(option.value)}
                     activeOpacity={0.7}
                   >
-                    <Text
-                      style={[
-                        tw`font-semibold`,
-                        filterStatus === option.value ? tw`text-purple-600` : tw`text-gray-700`,
-                      ]}
-                    >
+                    <Text style={tw`text-[14px] font-semibold ${filterStatus === option.value ? 'text-violet-300' : 'text-white/45'}`}>
                       {option.label}
                     </Text>
                   </TouchableOpacity>
@@ -1041,11 +473,11 @@ export default function GrowthHubScreen() {
               </View>
 
               <TouchableOpacity
-                style={tw`bg-purple-600 py-4 rounded-xl shadow-lg`}
+                style={tw`bg-violet-600 h-[52px] rounded-2xl items-center justify-center`}
                 onPress={() => setShowFilterModal(false)}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                <Text style={tw`text-white text-center font-bold text-lg`}>Apply Filters</Text>
+                <Text style={tw`text-white font-semibold text-[15px]`}>Apply filters</Text>
               </TouchableOpacity>
             </View>
           </View>

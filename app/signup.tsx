@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
+import { DARK_BG } from '@/constants/customConstants';
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function SignupScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-[#05050e]`}>
+    <SafeAreaView style={tw`flex-1 bg-[${DARK_BG}]`}>
       <StatusBar style="light" />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`flex-1`}>
         <ScrollView style={tw`flex-1 px-7`} contentContainerStyle={tw`pb-8`} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>

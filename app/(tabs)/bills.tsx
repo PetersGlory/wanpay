@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { DARK_BG } from '@/constants/customConstants';
 
 interface BillCategory {
   id: string;
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
-  color: string;
+  iconColor: string;
+  bgColor: string;
   route: string;
 }
 
@@ -16,83 +19,72 @@ export default function BillsScreen() {
   const router = useRouter();
 
   const billCategories: BillCategory[] = [
-    { id: '1', name: 'Airtime', icon: 'call', color: '#8b5cf6', route: '/bills/airtime' },
-    { id: '2', name: 'Data', icon: 'wifi', color: '#3b82f6', route: '/bills/data' },
-    { id: '3', name: 'Electricity', icon: 'flash', color: '#f59e0b', route: '/bills/electricity' },
-    { id: '4', name: 'TV Subscription', icon: 'tv', color: '#ef4444', route: '/bills/tv' },
-    { id: '5', name: 'Education', icon: 'school', color: '#10b981', route: '/bills/education' },
-    { id: '6', name: 'Internet', icon: 'globe', color: '#06b6d4', route: '/bills/internet' },
+    { id: '1', name: 'Airtime',         icon: 'call-outline',      iconColor: '#a78bfa', bgColor: 'bg-violet-500/15', route: '/bills/airtime' },
+    { id: '2', name: 'Data',            icon: 'wifi-outline',      iconColor: '#60a5fa', bgColor: 'bg-blue-500/15',   route: '/bills/data' },
+    { id: '3', name: 'Electricity',     icon: 'flash-outline',     iconColor: '#fbbf24', bgColor: 'bg-amber-500/15', route: '/bills/electricity' },
+    { id: '4', name: 'TV Subscription', icon: 'tv-outline',        iconColor: '#f87171', bgColor: 'bg-red-500/15',   route: '/bills/tv' },
+    { id: '5', name: 'Education',       icon: 'school-outline',    iconColor: '#34d399', bgColor: 'bg-emerald-500/15', route: '/bills/education' },
+    { id: '6', name: 'Internet',        icon: 'globe-outline',     iconColor: '#22d3ee', bgColor: 'bg-cyan-500/15',  route: '/bills/internet' },
   ];
 
   const recentBills = [
-    { id: '1', name: 'MTN Airtime', amount: 1000, date: 'Nov 5, 2024' },
-    { id: '2', name: 'EKEDC', amount: 5000, date: 'Nov 3, 2024' },
-    { id: '3', name: 'DSTV Compact', amount: 10500, date: 'Nov 1, 2024' },
+    { id: '1', name: 'MTN Airtime',   amount: 1000,  date: 'Nov 5, 2024',  icon: 'call-outline',  iconColor: '#a78bfa', bgColor: 'bg-violet-500/10' },
+    { id: '2', name: 'EKEDC',         amount: 5000,  date: 'Nov 3, 2024',  icon: 'flash-outline', iconColor: '#fbbf24', bgColor: 'bg-amber-500/10' },
+    { id: '3', name: 'DSTV Compact',  amount: 10500, date: 'Nov 1, 2024',  icon: 'tv-outline',    iconColor: '#f87171', bgColor: 'bg-red-500/10' },
   ];
 
   return (
-    <SafeAreaView style={tw`flex-1 py-4 bg-gray-50`}>
-      <StatusBar barStyle="dark-content" />
-      
+    <SafeAreaView style={tw`flex-1 py-4 bg-[${DARK_BG}]`}>
+      <StatusBar style="light" />
+
       {/* Header */}
-      <View style={tw`bg-white px-4 py-4 border-b border-gray-100`}>
-        <Text style={tw`text-2xl font-bold text-gray-900`}>Pay Bills</Text>
-        <Text style={tw`text-sm text-gray-500 mt-1`}>Quick and easy payments</Text>
+      <View style={tw`px-5 pt-6 pb-5 border-b border-white/7`}>
+        <Text style={tw`text-white text-[22px] font-bold tracking-tight`}>Pay bills</Text>
+        <Text style={tw`text-white/35 text-[12px] mt-1`}>Quick and easy payments</Text>
       </View>
 
-      <ScrollView style={tw`flex-1 px-4`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pb-8`}>
-        {/* Bill Categories */}
-        <View style={tw`mt-6`}>
-          <Text style={tw`text-base font-bold text-gray-900 mb-4`}>Services</Text>
-          <View style={tw`flex-row flex-wrap justify-between`}>
-            {billCategories.map((category) => (
-              <TouchableOpacity
-                key={category.id}
-                style={[
-                  tw`w-[48%] bg-white p-5 rounded-2xl mb-4 items-center`,
-                  { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 }
-                ]}
-                activeOpacity={0.7}
-                onPress={() => router.push(category.route as any)}
-              >
-                <View style={[tw`w-14 h-14 rounded-full items-center justify-center mb-3`, { backgroundColor: `${category.color}20` }]}>
-                  <Ionicons name={category.icon} size={28} color={category.color} />
-                </View>
-                <Text style={tw`font-semibold text-gray-900 text-center`}>{category.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+      <ScrollView style={tw`flex-1 px-5`} showsVerticalScrollIndicator={false} contentContainerStyle={tw`pt-6 pb-10`}>
+
+        {/* Categories */}
+        <Text style={tw`text-white text-[14px] font-semibold tracking-tight mb-4`}>Services</Text>
+        <View style={tw`flex-row flex-wrap justify-between mb-6`}>
+          {billCategories.map(cat => (
+            <TouchableOpacity
+              key={cat.id}
+              style={tw`w-[48%] bg-white/4 border border-white/7 rounded-2xl p-4 items-center mb-3`}
+              activeOpacity={0.75}
+              onPress={() => router.push(cat.route as any)}
+            >
+              <View style={tw`w-14 h-14 rounded-2xl items-center justify-center mb-3 ${cat.bgColor} border border-white/10`}>
+                <Ionicons name={cat.icon} size={24} color={cat.iconColor} />
+              </View>
+              <Text style={tw`text-white text-[13px] font-semibold text-center`}>{cat.name}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        {/* Recent Bills */}
-        <View style={tw`mt-6 mb-6`}>
-          <Text style={tw`text-base font-bold text-gray-900 mb-4`}>Recent Bills</Text>
-          {recentBills.length > 0 ? (
-            recentBills.map((bill) => (
-              <TouchableOpacity
-                key={bill.id}
-                style={[
-                  tw`bg-white p-4 rounded-2xl mb-3 flex-row justify-between items-center`,
-                  { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 3, elevation: 1 }
-                ]}
-                activeOpacity={0.7}
-              >
-                <View>
-                  <Text style={tw`font-semibold text-gray-900`}>{bill.name}</Text>
-                  <Text style={tw`text-xs text-gray-500 mt-1`}>{bill.date}</Text>
-                </View>
-                <Text style={tw`font-bold text-gray-900`}>₦{bill.amount.toLocaleString()}</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <View style={tw`bg-white p-8 rounded-2xl items-center`}>
-              <Ionicons name="receipt-outline" size={48} color="#9ca3af" />
-              <Text style={tw`text-gray-400 mt-3`}>No recent bills</Text>
+        {/* Recent bills */}
+        <Text style={tw`text-white text-[14px] font-semibold tracking-tight mb-4`}>Recent bills</Text>
+        {recentBills.map(bill => (
+          <TouchableOpacity
+            key={bill.id}
+            style={tw`bg-white/4 border border-white/7 rounded-2xl p-3.5 mb-2.5 flex-row justify-between items-center`}
+            activeOpacity={0.75}
+          >
+            <View style={tw`flex-row items-center gap-3`}>
+              <View style={tw`w-[42px] h-[42px] rounded-[14px] items-center justify-center ${bill.bgColor}`}>
+                <Ionicons name={bill.icon as any} size={18} color={bill.iconColor} />
+              </View>
+              <View>
+                <Text style={tw`text-white text-[13px] font-semibold mb-0.5`}>{bill.name}</Text>
+                <Text style={tw`text-white/30 text-[11px]`}>{bill.date}</Text>
+              </View>
             </View>
-          )}
-        </View>
+            <Text style={tw`text-white/80 text-[13px] font-bold`}>₦{bill.amount.toLocaleString()}</Text>
+          </TouchableOpacity>
+        ))}
+
       </ScrollView>
     </SafeAreaView>
   );
 }
-

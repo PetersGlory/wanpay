@@ -1,3 +1,4 @@
+import { DARK_BG } from '@/constants/customConstants';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback } from 'react';
@@ -19,7 +20,7 @@ export default function WelcomeScreen() {
   const handleSignup = useCallback(() => router.push('/signup'), [router]);
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-[#05050e]`}>
+    <SafeAreaView style={tw`flex-1 bg-[${DARK_BG}]`}>
       <StatusBar style="light" />
 
       {/* Background glows */}
