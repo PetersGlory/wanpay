@@ -162,7 +162,7 @@ export default function ProfileScreen() {
                 </View>
                 <View style={tw`flex-1`}>
                   <Text style={tw`text-gray-900 text-[13px] font-semibold`}>{item.title}</Text>
-                  <Text style={tw`text-gray-300 text-[11px] mt-0.5`}>{item.subtitle}</Text>
+                  <Text style={tw`text-gray-500 text-[11px] mt-0.5`}>{item.subtitle}</Text>
                 </View>
               </View>
               <Ionicons name="chevron-forward" size={16} color="#9ca3af" />

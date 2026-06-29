@@ -63,7 +63,7 @@ export default function HistoryScreen() {
           ) : transactions.length === 0 ? (
             <View style={tw`bg-gray-50 border border-gray-200 rounded-2xl p-10 items-center mt-6`}>
               <Ionicons name="receipt-outline" size={48} color="#9ca3af" />
-              <Text style={tw`text-gray-300 text-[14px] mt-4`}>No transactions found</Text>
+              <Text style={tw`text-gray-500 text-[14px] mt-4`}>No transactions found</Text>
             </View>
           ) : (
             transactions.map((txn) => (

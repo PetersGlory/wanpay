@@ -142,9 +142,9 @@ export default function GrowthHubScreen() {
   }, [activeSection, filteredGrants.length]);
 
   const getStatusStyle = (status: string) => {
-    if (status === 'open') return { bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: '#10b981', label: 'Open' };
-    if (status === 'closing-soon') return { bg: 'bg-amber-500/15', text: 'text-amber-400', dot: '#f59e0b', label: 'Closing soon' };
-    return { bg: 'bg-white/10', text: 'text-white/40', dot: '#6b7280', label: 'Closed' };
+    if (status === 'open')     return { bg: 'bg-emerald-100', text: 'text-emerald-700', dot: '#10b981', label: 'Open' };
+    if (status === 'closing-soon') return { bg: 'bg-amber-100', text: 'text-amber-700', dot: '#f59e0b', label: 'Closing soon' };
+    return { bg: 'bg-gray-100', text: 'text-gray-500', dot: '#6b7280', label: 'Closed' };
   };
 
   return (
@@ -257,26 +257,26 @@ export default function GrowthHubScreen() {
                     </View>
                   </View>
 
-                  <View style={tw`flex-row items-center gap-2 mb-3`}>
-                    <View style={tw`bg-violet-500/15 border border-violet-500/20 px-3 py-1 rounded-full`}>
-                      <Text style={tw`text-violet-300 font-bold text-[12px]`}>{grant.amount}</Text>
+                    <View style={tw`flex-row items-center gap-2 mb-3`}>
+                    <View style={tw`bg-violet-100 border border-violet-200 px-3 py-1 rounded-full`}>
+                      <Text style={tw`text-violet-700 font-bold text-[12px]`}>{grant.amount}</Text>
                     </View>
-                    <View style={tw`bg-white/7 border border-white/10 px-3 py-1 rounded-full`}>
-                      <Text style={tw`text-white/45 text-[11px] font-semibold`}>{grant.category}</Text>
+                    <View style={tw`bg-gray-100 border border-gray-200 px-3 py-1 rounded-full`}>
+                      <Text style={tw`text-gray-500 text-[11px] font-semibold`}>{grant.category}</Text>
                     </View>
                   </View>
 
                   <View style={tw`flex-row items-center gap-1.5`}>
-                    <Ionicons name="calendar-outline" size={13} color="rgba(255,255,255,0.3)" />
-                    <Text style={tw`text-gray-300 text-[12px]`}>Deadline: {grant.deadline}</Text>
+                    <Ionicons name="calendar-outline" size={13} color="#9CA3AF" />
+                    <Text style={tw`text-gray-500 text-[12px]`}>Deadline: {grant.deadline}</Text>
                   </View>
                 </TouchableOpacity>
               );
             }) : (
               <View style={tw`bg-gray-50 border border-gray-200 rounded-2xl p-10 items-center mt-6`}>
-                <Ionicons name="search-outline" size={48} color="#9ca3af" />
-                <Text style={tw`text-gray-300 text-[14px] mt-4`}>No grants found</Text>
-                <Text style={tw`text-gray-200 text-[12px] mt-1`}>Try adjusting your search or filters</Text>
+                <Ionicons name="search-outline" size={48} color="#9CA3AF" />
+                <Text style={tw`text-gray-500 text-[14px] mt-4`}>No grants found</Text>
+                <Text style={tw`text-gray-400 text-[12px] mt-1`}>Try adjusting your search or filters</Text>
               </View>
             )}
           </RefreshableScrollView>
@@ -354,16 +354,16 @@ export default function GrowthHubScreen() {
               <Text style={tw`text-gray-400 text-[13px] mb-5`}>{selectedGrant.organization}</Text>
 
               {/* Amount & deadline */}
-              <View style={tw`flex-row gap-3 mb-6`}>
-                <View style={tw`flex-1 bg-violet-500/15 border border-violet-500/20 rounded-2xl p-4`}>
-                  <Text style={tw`text-violet-300 font-bold text-[16px] text-center`}>{selectedGrant.amount}</Text>
-                  <Text style={tw`text-violet-400/60 text-[11px] text-center mt-1`}>Grant amount</Text>
-                </View>
-                <View style={tw`flex-1 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4`}>
-                  <Text style={tw`text-amber-300 font-bold text-[16px] text-center`}>{selectedGrant.deadline}</Text>
-                  <Text style={tw`text-amber-400/60 text-[11px] text-center mt-1`}>Deadline</Text>
-                </View>
-              </View>
+                  <View style={tw`flex-row gap-3 mb-6`}>
+                    <View style={tw`flex-1 bg-violet-100 border border-violet-200 rounded-2xl p-4`}>
+                      <Text style={tw`text-violet-700 font-bold text-[16px] text-center`}>{selectedGrant.amount}</Text>
+                      <Text style={tw`text-violet-500 text-[11px] text-center mt-1`}>Grant amount</Text>
+                    </View>
+                    <View style={tw`flex-1 bg-amber-50 border border-amber-200 rounded-2xl p-4`}>
+                      <Text style={tw`text-amber-700 font-bold text-[16px] text-center`}>{selectedGrant.deadline}</Text>
+                      <Text style={tw`text-amber-600 text-[11px] text-center mt-1`}>Deadline</Text>
+                    </View>
+                  </View>
 
               {/* Description */}
               <View style={tw`mb-5`}>
@@ -389,8 +389,8 @@ export default function GrowthHubScreen() {
                 <Text style={tw`text-gray-900 text-[13px] font-semibold mb-2`}>Eligibility</Text>
                 <View style={tw`flex-row flex-wrap gap-2`}>
                   {selectedGrant.eligibility.map((item, i) => (
-                    <View key={i} style={tw`bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full`}>
-                      <Text style={tw`text-emerald-400 text-[12px] font-semibold`}>{item}</Text>
+                    <View key={i} style={tw`bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-full`}>
+                      <Text style={tw`text-emerald-700 text-[12px] font-semibold`}>{item}</Text>
                     </View>
                   ))}
                 </View>
@@ -441,11 +441,11 @@ export default function GrowthHubScreen() {
                 ].map(option => (
                   <TouchableOpacity
                     key={option.value}
-                    style={tw`border ${filterStatus === option.value ? 'border-violet-500/60 bg-violet-500/10' : 'border-gray-200 bg-gray-50'} rounded-2xl px-4 h-[48px] flex-row items-center`}
+                    style={tw`border ${filterStatus === option.value ? 'border-violet-500 bg-violet-100' : 'border-gray-200 bg-gray-50'} rounded-2xl px-4 h-[48px] flex-row items-center`}
                     onPress={() => setFilterStatus(option.value)}
                     activeOpacity={0.7}
                   >
-                    <Text style={tw`text-[14px] font-semibold ${filterStatus === option.value ? 'text-violet-300' : 'text-gray-400'}`}>
+                    <Text style={tw`text-[14px] font-semibold ${filterStatus === option.value ? 'text-violet-700' : 'text-gray-500'}`}>
                       {option.label}
                     </Text>
                   </TouchableOpacity>

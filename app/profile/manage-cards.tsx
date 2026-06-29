@@ -100,8 +100,8 @@ export default function ManageCardsScreen() {
         ) : cards.length === 0 ? (
           <View style={tw`items-center py-10`}>
             <Ionicons name="card-outline" size={64} color="#E5E7EB" />
-            <Text style={tw`text-gray-300 text-lg mt-4`}>No cards found</Text>
-            <Text style={tw`text-gray-200 text-sm mt-2`}>Add a card to get started</Text>
+            <Text style={tw`text-gray-500 text-lg mt-4`}>No cards found</Text>
+            <Text style={tw`text-gray-400 text-sm mt-2`}>Add a card to get started</Text>
             <TouchableOpacity style={tw`bg-blue-600 px-6 py-3 rounded-xl mt-6`} onPress={() => Alert.alert('Add Card', 'Adding a new card coming soon.')} activeOpacity={0.8}>
               <Text style={tw`text-white font-bold`}>Add Card</Text>
             </TouchableOpacity>
